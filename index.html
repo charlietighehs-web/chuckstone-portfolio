@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chuck Stone Portfolio</title>
+<meta name="description" content="Charles Harmon Stone (Chuck Stone): Vagueism, paintings, product and graphic design, 3D, and film. Boston, MA.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=UnifrakturMaguntia&display=swap">
+<style>
+  :root {
+    --wall: #f4f3ef;
+    --paper: #fbfaf7;
+    --ink: #161616;
+    --muted: #6d6b66;
+    --rule: rgba(22, 22, 22, 0.14);
+    --blue: #1f4fd8;
+    --red: #e8401c;
+    --room: #0f0f0f;
+    --room-ink: #ecebe6;
+    --room-muted: #9a9892;
+    --gutter: clamp(16px, 4vw, 56px);
+    --max: 1320px;
+    --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+  body {
+    background: var(--wall);
+    color: var(--ink);
+    font: 400 16px/1.55 var(--font);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  img, video, canvas { display: block; max-width: 100%; }
+  img { height: auto; }
+  [hidden] { display: none !important; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  }
+
+  /* ── Top bar ── */
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--wall); }
+  .bar {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50;
+    background: color-mix(in srgb, var(--wall) 88%, transparent);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s;
+  }
+  .bar.scrolled { border-bottom-color: var(--rule); }
+  .bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 24px; height: 60px; }
+  .mark { font-weight: 700; font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; white-space: nowrap; }
+  .nav { display: flex; align-items: center; gap: clamp(12px, 2.2vw, 28px); }
+  .nav a { white-space: nowrap; text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); transition: color .15s; }
+  .nav a:hover, .nav a.on { color: var(--ink); }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 9px 18px; border: 2px solid var(--ink); background: transparent; color: var(--ink);
+    text-decoration: none; white-space: nowrap; transition: background .15s, color .15s;
+  }
+  .btn:hover { background: var(--ink); color: var(--wall); }
+  .nav .btn { color: var(--ink); padding: 7px 14px; }
+  .nav .btn:hover { color: var(--wall); }
+
+  /* ── Hero ── */
+  .hero { padding: clamp(40px, 7vw, 96px) 0 clamp(56px, 8vw, 120px); }
+  .hero .wrap { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
+  .name {
+    font-weight: 700; letter-spacing: -0.045em; line-height: 0.86;
+    font-size: clamp(60px, 10.5vw, 156px);
+  }
+  .name span { display: block; }
+  .name .last { position: relative; display: inline-block; }
+  .name .last { isolation: isolate; }
+  .name .last img {
+    position: absolute; z-index: -1; left: -3%; bottom: -24%; width: 106%; height: 34%;
+    object-fit: fill;
+  }
+  /* Design Mountain: the name as physical letters, dropped onto the stage floor */
+  .stage { position: relative; padding-bottom: clamp(28px, 3.4vw, 52px); }
+  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: pan-y; }
+  .stage canvas.grab { cursor: grab; }
+  .stage canvas.grabbing { cursor: grabbing; }
+  .stage.live .name { color: transparent; }
+  .stage.live .name .last img { visibility: hidden; }
+  .stage::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--rule); }
+  .stage-ui { margin-top: 14px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; color: var(--muted); font-size: 14px; }
+  .stage-ui .eyebrow { color: var(--ink); }
+  .btn.small { padding: 6px 12px; font-size: 11px; border-width: 1.5px; }
+
+  .lede { margin-top: clamp(24px, 3vw, 36px); max-width: 34em; font-size: clamp(17px, 1.5vw, 20px); line-height: 1.5; }
+  .lede strong { font-weight: 700; }
+  .hero-meta { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 10px 26px; color: var(--muted); font-size: 14px; }
+  .hero-meta a { text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .hero-meta a:hover { color: var(--ink); border-color: var(--ink); }
+  .hero-art { justify-self: center; width: min(100%, 400px); }
+  .hero-art button { display: block; width: 100%; }
+
+  /* hung work: cut-out photographs that cast a soft shadow on the wall */
+  .hung { filter: drop-shadow(0 18px 18px rgba(0,0,0,.16)) drop-shadow(0 2px 3px rgba(0,0,0,.12)); transition: transform .35s ease, filter .35s ease; }
+  button:hover > .hung, a:hover > .hung { transform: translateY(-4px); filter: drop-shadow(0 26px 24px rgba(0,0,0,.18)) drop-shadow(0 3px 4px rgba(0,0,0,.12)); }
+
+  .label { margin-top: 18px; font-size: 13px; line-height: 1.45; color: var(--muted); text-align: left; }
+  .label b { display: block; color: var(--ink); font-weight: 700; }
+  .label i { font-style: italic; color: var(--ink); }
+
+  /* ── Section heads ── */
+  section { position: relative; }
+  .section { padding: clamp(64px, 9vw, 128px) 0; border-top: 1px solid var(--rule); }
+  .head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px 48px; align-items: end; margin-bottom: clamp(40px, 6vw, 80px); }
+  .head h2 {
+    position: relative; display: inline-block; isolation: isolate;
+    font-size: clamp(44px, 7vw, 104px); font-weight: 700; letter-spacing: -0.04em; line-height: 0.9;
+  }
+  .head h2 img { position: absolute; z-index: -1; left: -5%; top: 38%; width: 70%; height: 72%; object-fit: fill; }
+  .head h2 img.under { top: 96%; height: 30%; left: -2%; width: 64%; }
+  .head .num { display: block; margin-bottom: 14px; color: var(--muted); }
+  .head p { max-width: 36em; color: var(--muted); font-size: 16px; }
+
+  /* ── Vagueism ── */
+  .vg-open { display: grid; grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
+  .vg-cover button { display: block; width: 100%; }
+  .vg-cover img { width: 100%; box-shadow: 0 22px 44px rgba(0,0,0,.2), 0 2px 4px rgba(0,0,0,.1); transition: transform .35s ease; }
+  .vg-cover button:hover img { transform: translateY(-4px) rotate(-0.6deg); }
+  .vg-question { font-size: clamp(26px, 3.1vw, 44px); font-weight: 700; letter-spacing: -0.025em; line-height: 1.08; text-wrap: balance; margin-bottom: 26px; }
+  .vg-body p:not(.vg-question) { color: var(--muted); max-width: 36em; }
+  .vg-body p + p { margin-top: 14px; }
+  .vg-body .btn { margin-top: 28px; }
+
+  .threshold { margin-top: clamp(56px, 8vw, 104px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr); border: 2px solid var(--ink); }
+  .t-zone { padding: 16px 18px; display: grid; gap: 4px; align-content: start; font-size: 13px; color: var(--muted); }
+  .t-zone b { color: var(--ink); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; }
+  .t-vague { background: linear-gradient(90deg, rgba(22,22,22,.07), rgba(22,22,22,0)); }
+  .t-vague b, .t-vague span { filter: blur(0.4px); }
+  .t-bounds { background: var(--paper); border-left: 2px solid var(--ink); border-right: 2px solid var(--ink); }
+  .t-specific { background: repeating-linear-gradient(45deg, rgba(232,64,28,.11) 0 7px, transparent 7px 15px); }
+  .t-specific b { color: var(--red); }
+  .kinds { margin-top: clamp(28px, 4vw, 44px); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 44px); }
+  .kinds h3 { font-size: clamp(20px, 1.8vw, 24px); letter-spacing: -0.02em; line-height: 1.15; }
+  .kinds p { margin-top: 8px; color: var(--muted); }
+
+  .vg-lower { margin-top: clamp(64px, 9vw, 120px); display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr); gap: clamp(32px, 6vw, 88px); align-items: start; }
+  .principles {
+    background: var(--paper); padding: clamp(24px, 4.5vw, 60px);
+    box-shadow: 0 1px 0 var(--rule), 0 20px 44px rgba(0,0,0,.09);
+    font-family: "EB Garamond", Garamond, "Times New Roman", serif; font-size: clamp(16px, 1.35vw, 18.5px); line-height: 1.45;
+  }
+  .blackletter { font-family: "UnifrakturMaguntia", "Old English Text MT", serif; font-weight: 400; font-size: clamp(30px, 3.6vw, 50px); line-height: 1.1; text-align: center; margin-bottom: clamp(20px, 3vw, 34px); }
+  .principles ol { padding-left: 2.1em; }
+  .principles li { padding-left: 0.35em; }
+  .principles li + li { margin-top: 5px; }
+  .principles ol.blank { margin: 10px 0; padding-left: 0; list-style-position: inside; columns: 6 3.2em; column-gap: 0.6em; color: var(--muted); opacity: .75; }
+  .principles ol.blank li { margin: 0; padding: 0; height: 1.45em; }
+  .principles ol.blank li::marker { font-variant-numeric: tabular-nums; }
+  .principles .caps { text-transform: uppercase; letter-spacing: 0.03em; }
+  .principles .cap { font-family: var(--font); margin-top: 18px; }
+  .annotated h4 { margin-bottom: 22px; color: var(--muted); }
+  .annotated figure { display: grid; grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  .annotated figure + figure { margin-top: 34px; }
+  .annotated button { display: block; width: 100%; }
+  .annotated img { width: 100%; }
+  .annotated figcaption b { display: block; font-size: 15px; }
+  .annotated figcaption p { margin-top: 6px; color: var(--muted); font-size: 14.5px; line-height: 1.5; }
+
+  /* ── Paintings: a salon wall ── */
+  .wall {
+    --in: clamp(7px, 0.95vw, 13px);              /* one inch of canvas, on screen */
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+    gap: clamp(40px, 6vw, 88px) clamp(32px, 5vw, 80px);
+  }
+  .piece { width: calc(var(--w) * var(--in)); max-width: 100%; }
+  .piece button { display: block; width: 100%; text-align: left; }
+  .piece img.hung { width: 100%; height: auto; }
+  .piece .label { width: max(100%, 168px); }
+  .wall-note { margin-top: clamp(48px, 6vw, 80px); text-align: center; color: var(--muted); font-size: 13px; }
+
+  /* ── Design ── */
+  .case { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(28px, 5vw, 72px); align-items: start; }
+  .case-hero { background: #2a2a2a; }
+  .case-hero img { width: 100%; height: auto; }
+  .case h3, .tile h3 { font-size: clamp(28px, 3.2vw, 44px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.02; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 22px; }
+  .tags span { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 10px; border: 1px solid var(--rule); color: var(--muted); }
+  .case p + p { margin-top: 14px; }
+  .case .body { font-size: 16px; }
+  .case .body .pull { font-size: clamp(19px, 1.8vw, 23px); line-height: 1.35; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 18px; }
+  .views { margin-top: clamp(20px, 3vw, 32px); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .views button { background: #2a2a2a; position: relative; overflow: hidden; }
+  .views img { width: 100%; aspect-ratio: 1; object-fit: cover; transition: transform .4s ease; }
+  .views button:hover img { transform: scale(1.04); }
+  .views figcaption, .cap { font-size: 12px; color: var(--muted); margin-top: 8px; text-align: left; line-height: 1.4; }
+  .proto { margin-top: clamp(40px, 6vw, 72px); display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: clamp(20px, 3vw, 40px); align-items: end; }
+  .proto figure { background: #fff; padding: clamp(12px, 2vw, 24px); }
+  .proto img { width: 100%; height: auto; }
+
+  .duo { margin-top: clamp(72px, 10vw, 136px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 72px); align-items: start; }
+  .tile p { margin-top: 12px; color: var(--muted); max-width: 32em; }
+  .tile .media { margin-top: 24px; }
+  .poster img { width: 100%; height: auto; box-shadow: 0 18px 40px rgba(0,0,0,.16); }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pair video { width: 100%; aspect-ratio: 606 / 1080; object-fit: cover; background: #ddd; }
+
+  /* ── 3D & Motion ── */
+  .pano { position: relative; height: clamp(280px, 44vw, 560px); background: #24211b; overflow: hidden; cursor: grab; touch-action: pan-y; user-select: none; }
+  .pano.dragging { cursor: grabbing; }
+  .pano canvas { width: 100%; height: 100%; }
+  .pano .hint {
+    position: absolute; left: 16px; bottom: 16px; color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    background: rgba(0,0,0,.45); padding: 8px 12px; pointer-events: none; transition: opacity .4s;
+  }
+  .row { display: flex; gap: clamp(12px, 2vw, 24px); align-items: stretch; }
+  .row > * { min-width: 0; }
+  .row > figure, .row > .stack { flex: var(--g, 1) 1 0; }
+  .stack { display: grid; gap: clamp(16px, 2vw, 24px); align-content: start; }
+  .row video, .row .poster-btn { width: 100%; aspect-ratio: var(--ar); object-fit: cover; background: #222; }
+  .cap b { color: var(--ink); font-weight: 700; }
+
+  .sims { margin-top: clamp(56px, 8vw, 104px); display: grid; gap: clamp(16px, 2.4vw, 28px); }
+  .sims-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px 48px; align-items: end; margin-bottom: clamp(4px, 1vw, 12px); }
+  .sims-head h3 { font-size: clamp(28px, 3.2vw, 44px); font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+  .sims-head p { color: var(--muted); max-width: 34em; }
+  .sims video { background: #3a3a3a; }
+  video.square { width: 100%; aspect-ratio: 1; object-fit: cover; background: #eee; }
+  .proteus { position: relative; background: #000; display: grid; justify-items: center; padding: 8px 0 24px; }
+  .proteus video { width: min(100%, 360px); aspect-ratio: 2 / 3; object-fit: cover; }
+  .proteus .btn { border-color: #fff; color: #fff; }
+  .proteus .btn:hover { background: #fff; color: #000; }
+
+  /* ── Instagram ── */
+  .ig { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 88px); align-items: center; }
+  .ig-handle { display: inline-block; font-size: clamp(26px, 3vw, 40px); font-weight: 700; letter-spacing: -0.03em; text-decoration: none; border-bottom: 3px solid var(--ink); line-height: 1.15; }
+  .ig-handle:hover { color: var(--blue); border-color: var(--blue); }
+  .ig dl { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: clamp(24px, 3vw, 36px) 0; }
+  .ig dl div { border-top: 2px solid var(--ink); padding-top: 12px; }
+  .ig dt { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+  .ig dd { font-size: clamp(38px, 4.4vw, 64px); font-weight: 700; letter-spacing: -0.045em; line-height: 1; margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .ig-id { display: flex; align-items: center; gap: 16px; }
+  .ig-avatar { width: clamp(64px, 6vw, 84px); aspect-ratio: 1; object-fit: cover; object-position: 50% 40%; border-radius: 50%; border: 2px solid var(--ink); }
+  .reels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(10px, 1.6vw, 20px); padding-bottom: 32px; }
+  .reels figure:nth-child(2) { transform: translateY(32px); }
+  .reel { display: block; width: 100%; border: 2px solid var(--ink); border-radius: 20px; overflow: hidden; background: #111; transition: transform .3s ease; }
+  .reel:hover { transform: translateY(-4px); }
+  .reel img { width: 100%; aspect-ratio: 782 / 1600; object-fit: cover; }
+
+  /* ── About: photographs ── */
+  .portraits { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.72fr) minmax(0, 1fr); gap: clamp(10px, 1.6vw, 20px); align-items: end; margin-bottom: clamp(40px, 6vw, 80px); }
+  .portraits button { display: block; width: 100%; overflow: hidden; }
+  .portraits img { width: 100%; transition: transform .4s ease; }
+  .portraits button:hover img { transform: scale(1.02); }
+
+  /* ── Film: the dark room ── */
+  .room { background: var(--room); color: var(--room-ink); border-top: 0; }
+  .room .head p, .room .cap { color: var(--room-muted); }
+  .room .cap b { color: var(--room-ink); }
+  .room .head .num { color: var(--room-muted); }
+  .poster-btn { position: relative; display: block; overflow: hidden; }
+  .poster-btn video, .poster-btn img { width: 100%; height: 100%; object-fit: cover; }
+  .poster-btn img { position: absolute; inset: 0; transition: opacity .3s; }
+  .poster-btn.previewing img { opacity: 0; }
+  .play {
+    position: absolute; left: 14px; bottom: 14px; display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    background: rgba(15,15,15,.72); color: #fff; padding: 8px 12px; pointer-events: none;
+  }
+  .play::before { content: ""; width: 0; height: 0; border-left: 8px solid currentColor; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .films { display: grid; gap: clamp(28px, 4vw, 48px); }
+
+  /* ── About ── */
+  .about { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(32px, 6vw, 96px); }
+  .about .intro { font-size: clamp(19px, 1.9vw, 25px); line-height: 1.42; letter-spacing: -0.01em; }
+  .about .intro p + p { margin-top: 18px; }
+  .cv h4 { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+  .cv section + section { margin-top: 34px; }
+  .cv .item + .item { margin-top: 16px; }
+  .cv .item b { display: block; }
+  .cv .item span { color: var(--muted); font-size: 14px; }
+  .cv ul { list-style: none; color: var(--muted); font-size: 15px; }
+  .cv li + li { margin-top: 4px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+  .btn.solid { background: var(--ink); color: var(--wall); }
+  .btn.solid:hover { background: transparent; color: var(--ink); }
+
+  footer { border-top: 1px solid var(--rule); padding: 28px 0 40px; font-size: 12px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  footer a { text-decoration: none; }
+  footer a:hover { color: var(--ink); }
+
+  /* ── Lightbox ── */
+  dialog.lb {
+    border: 0; padding: 0; margin: 0; width: 100vw; height: 100dvh; max-width: none; max-height: none;
+    background: rgba(12,12,12,.97); color: #f2f1ec;
+  }
+  dialog.lb::backdrop { background: rgba(12,12,12,.6); }
+  .lb-inner { position: absolute; inset: 0; display: grid; grid-template-rows: 1fr auto; padding: 56px 16px 16px; }
+  .lb-stage { display: grid; place-items: center; min-height: 0; }
+  .lb-stage img, .lb-stage video { max-width: min(100%, 1600px); max-height: calc(100dvh - 140px); width: auto; height: auto; object-fit: contain; }
+  .lb-cap { text-align: center; font-size: 13px; color: #b9b7b1; padding: 14px 8px 4px; min-height: 2.6em; }
+  .lb-cap b { color: #fff; }
+  .lb-x, .lb-prev, .lb-next {
+    position: absolute; color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 10px 14px; border: 2px solid rgba(255,255,255,.7); background: rgba(0,0,0,.3);
+  }
+  .lb-x { top: 12px; right: 12px; }
+  .lb-prev { left: 12px; top: 50%; transform: translateY(-50%); }
+  .lb-next { right: 12px; top: 50%; transform: translateY(-50%); }
+  .lb-x:hover, .lb-prev:hover, .lb-next:hover { background: #fff; color: #111; }
+  .lb[data-single] .lb-prev, .lb[data-single] .lb-next { display: none; }
+
+  /* ── Small screens ── */
+  @media (max-width: 900px) {
+    .hero .wrap, .case, .duo, .about, .head, .vg-open, .vg-lower, .kinds, .threshold { grid-template-columns: minmax(0, 1fr); }
+    .vg-cover { width: min(72%, 360px); }
+    .sims-head, .ig { grid-template-columns: minmax(0, 1fr); }
+    .sims .row > figure { flex: 1 1 calc(50% - 12px); }
+    .sims .row > figure[style*="16 / 9"] { flex-basis: 100%; }
+    .t-bounds { border-left: 0; border-right: 0; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
+    .hero-art { width: min(78%, 380px); }
+    .views { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .proto { grid-template-columns: minmax(0, 1fr); }
+    .row { flex-wrap: wrap; }
+    .motion-grid .text { flex-basis: 100%; order: -1; padding: 0; }
+    .wall { --in: clamp(7px, 2.3vw, 12px); }
+  }
+  @media (max-width: 640px) {
+    .bar .wrap { height: auto; padding-top: 12px; padding-bottom: 10px; flex-direction: column; align-items: flex-start; gap: 8px; }
+    .nav { width: 100%; overflow-x: auto; gap: 16px; padding-bottom: 2px; scrollbar-width: none; }
+    .nav::-webkit-scrollbar { display: none; }
+    html { scroll-padding-top: 96px; }
+    .wall { --in: 3.6vw; gap: 44px 24px; }
+    .films .row { flex-direction: column; }
+    .films .row > figure, .films .row > .stack { flex: none; width: 100%; }
+    .films .row figure.tall { width: 72%; align-self: center; }
+    .lb-prev, .lb-next { top: auto; bottom: 16px; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .hung, .views img { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="bar" id="bar">
+  <div class="wrap">
+    <a class="mark" href="#top">Chuck Stone</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#vagueism">Vagueism</a>
+      <a href="#paintings">Paintings</a>
+      <a href="#design">Design</a>
+      <a href="#motion">3D &amp; Motion</a>
+      <a href="#film">Film</a>
+      <a href="#instagram">Instagram</a>
+      <a href="#about">About</a>
+      <a class="btn" href="Charles_Harmon_Stone_Resume.html">Resume</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ─────────── Hero ─────────── -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-text">
+        <div class="stage" id="stage">
+          <h1 class="name" id="name">
+            <span>Charles</span>
+            <span>Harmon</span>
+            <span class="last">Stone<img src="assets/ui/swatch-blue.webp" alt=""></span>
+          </h1>
+          <canvas id="mountain" aria-hidden="true"></canvas>
+        </div>
+        <div class="stage-ui" id="stage-ui">
+          <span class="eyebrow">Design Mountain</span>
+          <span class="stage-hint" id="stage-hint">Grab a letter and throw it.</span>
+          <button type="button" class="btn small" id="knock">Knock it down</button>
+          <button type="button" class="btn small" id="rebuild" hidden>Rebuild</button>
+        </div>
+        <p class="lede">
+          <strong>A designer of art.</strong> I treat every painting, product, and film the way a designer treats a problem: find the bounds that wrap tightly around it, then leave the rest open for the viewer. I call the method Vagueism. I study Design and Mathematics at Northeastern University and show my paintings with the Cambridge Art Association.
+        </p>
+        <div class="hero-meta">
+          <span>Boston, MA</span>
+          <a href="mailto:charlietighehs@gmail.com">charlietighehs@gmail.com</a>
+          <a href="http://www.linkedin.com/in/charlie-harmon-stone-314bb3325" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://apps.apple.com/app/apple-store/id6826600034?pt=129630162&amp;ct=portfolio&amp;mt=8" target="_blank" rel="noopener">Proteus on the App Store</a>
+        </div>
+      </div>
+      <figure class="hero-art">
+        <button type="button" data-lb="image" data-group="paintings" data-src="assets/art/self-portrait-full.webp"
+                data-caption="<b>Self Portrait</b>, 2026 · Oil on paper · 24 × 18 in.">
+          <img class="hung" src="assets/art/self-portrait.webp" width="1056" height="1400" alt="Self Portrait: a face in heavy black line, with realistically painted eyes, ears, nose and lips set into it">
+        </button>
+        <figcaption class="label"><b>Self Portrait</b>2026 · Oil on paper · 24 × 18 in.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ─────────── Vagueism ─────────── -->
+  <section class="section" id="vagueism">
+    <div class="wrap">
+      <div class="head">
+        <h2><span class="num eyebrow">01</span>Vagueism<img src="assets/ui/swatch-red.webp" alt=""></h2>
+        <p>“Vagueism is a design methodology that loosely frames problems so that their true boundaries become clear, grounded in a philosophy of anti-solutionism and the loss of access in clarity.” It is how I work in every medium on this page.</p>
+      </div>
+
+      <div class="vg-open">
+        <figure class="vg-cover">
+          <button type="button" data-lb="image" data-group="manifesto" data-src="assets/vagueism/page-01.webp" data-caption="<b>Vagueism</b>, 2026 · Manifesto · page 1 of 15">
+            <img src="assets/vagueism/cover.webp" width="696" height="900" loading="lazy" alt="Cover of the Vagueism manifesto: the self portrait in white line on black, with the question What might design look like if we treated vagueness not as a failure to specify, but as a form of care?">
+          </button>
+          <figcaption class="label"><b>Vagueism</b>2026 · Manifesto, 15 pages · Charles Harmon Stone</figcaption>
+          <div class="manifesto-pages" hidden>
+            <button type="button" data-lb="image" data-group="manifesto" data-src="assets/vagueism/page-02.webp" data-caption="<b>Vagueism</b> · page 2 of 15"></button>
+            <button type="button" data-lb="image" data-group="manifesto" data-src="assets/vagueism/page-03.webp" data-caption="<b>Vagueism</b> · page 3 of 15"></button>
+            <button type="button" data-lb="image" data-group="manifesto" data-src="assets/vagueism/page-04.webp" data-caption="<b>Vagueism</b> · page 4 of 15"></button>
+            <button type="button" data-lb="image" data-group="manifesto" data-src="assets/vagueism/page-05.webp" data-caption="<b>Vagueism</b> · page 5 of 15"></button>
+            <button type="button" data-lb="image" data-group="manifesto" data-src="assets/vagueism/page-06.webp" data-caption="<b>Vagueism</b> · page 6 of 15"></button>
+            <button type="button" data-lb="image" data-group="manifesto" data-src="assets/vagueism/page-07.webp" data-caption="<b>Vagueism</b> · page 7 of 15"></button>
+            <button type="button" data-lb="image" data-group="manifesto" data-src="assets/vagueism/page-08.webp" data-caption="<b>Vagueism</b> · page 8 of 15"></button>
+            <button type="button" data-lb="image" data-group="manifesto" data-src="assets/vagueism/page-09.webp" data-caption="<b>Vagueism</b> · page 9 of 15"></button>
+            <button type="button" data-lb="image" data-group="manifesto" data-src="assets/vagueism/page-10.webp" data-caption="<b>Vagueism</b> · page 10 of 15"></button>
+            <button type="button" data-lb="image" data-group="manifesto" data-src="assets/vagueism/page-11.webp" data-caption="<b>Vagueism</b> · page 11 of 15"></button>
+            <button type="button" data-lb="image" data-group="manifesto" data-src="assets/vagueism/page-12.webp" data-caption="<b>Vagueism</b> · page 12 of 15"></button>
+            <button type="button" data-lb="image" data-group="manifesto" data-src="assets/vagueism/page-13.webp" data-caption="<b>Vagueism</b> · page 13 of 15"></button>
+            <button type="button" data-lb="image" data-group="manifesto" data-src="assets/vagueism/page-14.webp" data-caption="<b>Vagueism</b> · page 14 of 15"></button>
+            <button type="button" data-lb="image" data-group="manifesto" data-src="assets/vagueism/page-15.webp" data-caption="<b>Vagueism</b> · page 15 of 15"></button>
+          </div>
+        </figure>
+
+        <div class="vg-body">
+          <p class="vg-question">What might design look like if we treated vagueness not as a failure to specify, but as a form of care?</p>
+          <p>It started with Charles Eames’s Design Q&amp;A. Asked “What are the boundaries of design?”, Eames answered, “What are the boundaries of problems?” My classmates heard a designer avoiding the question. I heard one setting its bounds: an answer built to fit the question exactly, open without excluding anything.</p>
+          <p>The manifesto traces that idea through speculative design (Dunne and Raby), pluriversal design (Escobar), ambiguity as a resource (Gaver, Beaver and Benford), and wicked problems (Rittel and Webber), then tests it on my own paintings and on Gerhard Richter’s.</p>
+          <button type="button" class="btn solid" id="read-manifesto">Read the manifesto</button>
+        </div>
+      </div>
+
+      <div class="threshold" role="img" aria-label="A scale from too vague to too specific. Too vague: the problem may not be solvable. The bounds: as simple as possible without exclusion. Too specific: a no-go zone that removes accessibility.">
+        <div class="t-zone t-vague"><b>Too vague</b><span>Okay, but the problem may not be solvable</span></div>
+        <div class="t-zone t-bounds"><b>The bounds</b><span>As simple as possible, without exclusion</span></div>
+        <div class="t-zone t-specific"><b>Too specific</b><span>No-go: removes access, leaves it partly unsolved</span></div>
+      </div>
+
+      <div class="kinds">
+        <article>
+          <h3>Vague thinking</h3>
+          <p>Like taking a lower bound in mathematics: draw bounds that wrap tightly around the problem, as simple as possible without excluding anything. Every problem is treated as wicked.</p>
+        </article>
+        <article>
+          <h3>Interpretive vagueness</h3>
+          <p>The meaning of the work stays open, so the viewer makes it instead of the designer deciding it. Vagueness becomes a power equalizer.</p>
+        </article>
+        <article>
+          <h3>Aesthetic vagueness</h3>
+          <p>Simplified lines, blurred edges, reduced color, intentional incompleteness. The reduction is what makes the image clear.</p>
+        </article>
+      </div>
+
+      <div class="vg-lower">
+        <div class="principles">
+          <h3 class="blackletter">The Principles of Vagueism</h3>
+          <ol>
+            <li>The artist views the work in the way that a designer views a problem, and is therefore a designer of art.</li>
+            <li>Both the artist and the philosophy are grounded in anti-solutionism.</li>
+            <li>The art “asks a question” that is not confined by a single solution.</li>
+            <li>Every problem is “wicked”. There is no reliable point at which a subject can be shown directly.</li>
+            <li>Every work has a threshold of solutions; the artist determines its bounds when drafting the problem.</li>
+            <li>Too specific is an absolute no-go when determining the bounds; it removes accessibility and leaves the problem partially unsolved.</li>
+            <li>Creating without determining the threshold of a problem is creating without integrity.</li>
+            <li>The artist embraces unfinished elements in the final composition; they must be intentional.</li>
+            <li>The artist reduces the most vague elements into movement and color relationships.</li>
+            <li>If the position of an element falls outside of the threshold, then the element can exist in any place to reflect that vagueness.</li>
+            <li>Representational elements do exist; they are chosen intentionally, often used to contrast vague elements.</li>
+            <li>Partially or fully covering representational elements is a useful technique to create vagueness.</li>
+            <li>To succeed with Vagueism, one must constantly defy the instinctual human behavior to make sense of the world.</li>
+          </ol>
+          <ol class="blank" start="14" aria-label="Principles 14 to 36, left open">
+            <li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+            <li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li>
+          </ol>
+          <ol start="37">
+            <li><span class="caps">The primary goal of Vagueism is to</span> establish the bounds which wrap tightly around the problem. In doing this we are simplifying our solution as much as possible without exclusion. The perfect artist encompasses the problem entirely, with flawless technical execution.</li>
+          </ol>
+          <p class="cap">Principles 14 through 36 are left open on purpose.</p>
+        </div>
+
+        <div class="annotated">
+          <h4 class="eyebrow">Annotated in the manifesto</h4>
+          <figure>
+            <button type="button" data-lb="image" data-group="annotated" data-src="assets/art/slaves-full.webp" data-caption="<b>“Slaves 1”</b> · Oil on canvas · 16 × 20 in.">
+              <img class="hung" src="assets/art/slaves.webp" width="1400" height="1166" loading="lazy" alt="“Slaves 1”">
+            </button>
+            <figcaption>
+              <b>“Slaves 1”</b>
+              <p>The first work of Vagueism. Bodies reduce to unstable forms where arms and legs become interchangeable. Three red bands stand for the heat of the sun and twelve rows for the darkened fields: together, the fifteen slave states.</p>
+            </figcaption>
+          </figure>
+          <figure>
+            <button type="button" data-lb="image" data-group="annotated" data-src="assets/art/self-portrait-full.webp" data-caption="<b>Self Portrait</b>, 2026 · Oil on paper · 24 × 18 in.">
+              <img class="hung" src="assets/art/self-portrait.webp" width="1056" height="1400" loading="lazy" alt="Self Portrait">
+            </button>
+            <figcaption>
+              <b>Self Portrait</b>
+              <p>Abstraction happens inside the drawn bounds; the realistic eyes, ears, and lips sit outside them in oil. The line between the two stands for the bounds of a problem, and the fingerprints stay in as a mark of the effort.</p>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── Paintings ─────────── -->
+  <section class="section" id="paintings">
+    <div class="wrap">
+      <div class="head">
+        <h2><span class="num eyebrow">02</span>Paintings<img src="assets/ui/swatch-yellow.webp" alt=""></h2>
+        <p>Each painting asks a question with more than one answer. The vaguest parts are reduced to movement and color. The representational parts (an eye, a mouth, the Mona Lisa) are chosen on purpose, set against the vague ones, and often covered. Every piece hangs at its true size relative to the others.</p>
+      </div>
+
+      <div class="wall">
+        <figure class="piece" style="--w:21">
+          <button type="button" data-lb="image" data-group="paintings" data-src="assets/art/mona-lisa-full.webp"
+                  data-caption="<b>“Mona Lisa”</b> · Oil on canvas with painter’s tape · 30 × 21 in.">
+            <img class="hung" src="assets/art/mona-lisa.webp" width="984" height="1400" loading="lazy" alt="Mona Lisa covered in blue painter's tape, with only her eyes showing and a bar of red paint below">
+          </button>
+          <figcaption class="label"><b>“Mona Lisa”</b>Oil on canvas with painter’s tape<br>30 × 21 in.</figcaption>
+        </figure>
+
+        <figure class="piece" style="--w:16">
+          <button type="button" data-lb="image" data-group="paintings" data-src="assets/art/where-is-basquiat-full.webp"
+                  data-caption="<b>“Where is Jean-Michel Basquiat.”</b> · Oil on canvas, acrylic on glass panel · 20 × 16 in.">
+            <img class="hung" src="assets/art/where-is-basquiat.webp" width="1160" height="1400" loading="lazy" alt="A painted portrait of Basquiat behind a glass panel drawn over in white with a skull, crowns and the words Famous American Artists">
+          </button>
+          <figcaption class="label"><b>“Where is Jean-Michel Basquiat.”</b>Oil on canvas, acrylic on glass panel<br>20 × 16 in.</figcaption>
+        </figure>
+
+        <figure class="piece" style="--w:7.5">
+          <button type="button" data-lb="image" data-group="paintings" data-src="assets/art/alvin-ailey-full.webp"
+                  data-caption="<b>Alvin Ailey</b>, 2026 · Oil on canvas · 11 × 7.5 in.">
+            <img class="hung" src="assets/art/alvin-ailey.webp" width="959" height="1400" loading="lazy" alt="Two dancers in a few black strokes on a pale canvas, with a bar of blue paint at the bottom">
+          </button>
+          <figcaption class="label"><b>Alvin Ailey</b>2026 · Oil on canvas<br>11 × 7.5 in.</figcaption>
+        </figure>
+
+        <figure class="piece" style="--w:10">
+          <button type="button" data-lb="image" data-group="paintings" data-src="assets/art/lve-full.webp"
+                  data-caption="<b>LVE</b>, 2026 · Oil on canvas · 8 × 10 in.">
+            <img class="hung" src="assets/art/lve.webp" width="1400" height="1152" loading="lazy" alt="A face drawn in one thick black stroke, with a pink smear and a candy wrapper in the corner">
+          </button>
+          <figcaption class="label"><b>LVE</b>2026 · Oil on canvas<br>8 × 10 in.</figcaption>
+        </figure>
+
+        <figure class="piece" style="--w:48">
+          <button type="button" data-lb="image" data-group="paintings" data-src="assets/art/shadow-of-divine-perfection-full.webp"
+                  data-caption="<b>Shadow of Divine Perfection</b> · about 36 × 48 in.">
+            <img class="hung" src="assets/art/shadow-of-divine-perfection.webp" width="1400" height="1051" loading="lazy" alt="A winged figure in black outline holding a gold-leafed column, on a field of blue and black dots with a yellow smear">
+          </button>
+          <figcaption class="label"><b>Shadow of Divine Perfection</b>About 36 × 48 in.</figcaption>
+        </figure>
+
+        <figure class="piece" id="slaves-1" style="--w:20">
+          <button type="button" data-lb="image" data-group="paintings" data-src="assets/art/slaves-full.webp"
+                  data-caption="<b>“Slaves 1”</b> · Oil on canvas · 16 × 20 in. · The first work of Vagueism">
+            <img class="hung" src="assets/art/slaves.webp" width="1400" height="1166" loading="lazy" alt="Three bent black figures above twelve diagonal strokes, three red bands in the corner, in a gilt frame">
+          </button>
+          <figcaption class="label"><b>“Slaves 1”</b>Oil on canvas · 16 × 20 in.<br>The first work of Vagueism</figcaption>
+        </figure>
+
+        <figure class="piece" style="--w:28">
+          <button type="button" data-lb="image" data-group="paintings" data-src="assets/art/beach-full.webp"
+                  data-caption="<b>Beach</b> · 41 × 28 in.">
+            <img class="hung" src="assets/art/beach.webp" width="726" height="1400" loading="lazy" alt="A standing figure seen from behind with curly hair, against a dark blue sky and pink polka-dot sand">
+          </button>
+          <figcaption class="label"><b>Beach</b>41 × 28 in.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── Design ─────────── -->
+  <section class="section" id="design">
+    <div class="wrap">
+      <div class="head">
+        <h2><span class="num eyebrow">03</span>Design<img class="under" src="assets/ui/swatch-blue.webp" alt=""></h2>
+        <p>Vagueism starts from one principle: the artist views the work the way a designer views a problem. Here the problems are a product, a print, and a brand, from a redesigned dress shoe to the identity for my clothing label.</p>
+      </div>
+
+      <article class="case">
+        <button type="button" class="case-hero" data-lb="image" data-group="stiletto" data-src="assets/design/stiletto-1-01-full.webp"
+                data-caption="<b>Imagined Stiletto</b> · Front three-quarter view">
+          <img src="assets/design/stiletto-1-01.webp" width="1100" height="1100" loading="lazy" alt="Render of a pale stiletto with a metal strap and a faceted metal sole that suspends the heel">
+        </button>
+        <div class="body">
+          <h3>Imagined Stiletto</h3>
+          <div class="tags"><span>Product design</span><span>3D modeling</span><span>Rendering</span><span>3D print</span></div>
+          <p class="pull">Heels trade comfort for looks. They limit mobility, raise the risk of trips and falls, and can cause blisters after long wear, yet they’re still the most popular women’s dress shoe.</p>
+          <p>The redesign keeps the stiletto’s silhouette and proportions. Its most striking feature is the metal sole, which suspends the heel: the new weight distribution makes the floating heel possible, and could lead to new design directions.</p>
+          <p>A solid metal outsole adds weight and durability, a textured upper insole adds grip, and a cushioned toebox stops toe cramming. The result is a hybrid of durability and elegance: a powerful weighted outsole built for an interplanetary traveler.</p>
+        </div>
+      </article>
+
+      <div class="views">
+        <figure><button type="button" data-lb="image" data-group="stiletto" data-src="assets/design/stiletto-2-02-full.webp" data-caption="<b>Imagined Stiletto</b> · Front view"><img src="assets/design/stiletto-2-02.webp" width="1100" height="1100" loading="lazy" alt="Front view"></button><figcaption>Front</figcaption></figure>
+        <figure><button type="button" data-lb="image" data-group="stiletto" data-src="assets/design/stiletto-2-03-full.webp" data-caption="<b>Imagined Stiletto</b> · Side profile"><img src="assets/design/stiletto-2-03.webp" width="1100" height="1100" loading="lazy" alt="Side profile"></button><figcaption>Side profile</figcaption></figure>
+        <figure><button type="button" data-lb="image" data-group="stiletto" data-src="assets/design/stiletto-2-04-full.webp" data-caption="<b>Imagined Stiletto</b> · Side-rear view"><img src="assets/design/stiletto-2-04.webp" width="1100" height="1100" loading="lazy" alt="Side-rear view"></button><figcaption>Side-rear</figcaption></figure>
+        <figure><button type="button" data-lb="image" data-group="stiletto" data-src="assets/design/stiletto-2-05-full.webp" data-caption="<b>Imagined Stiletto</b> · Rear three-quarter view"><img src="assets/design/stiletto-2-05.webp" width="1100" height="1100" loading="lazy" alt="Rear three-quarter view"></button><figcaption>Rear three-quarter</figcaption></figure>
+        <figure><button type="button" data-lb="image" data-group="stiletto" data-src="assets/design/stiletto-3-06-full.webp" data-caption="<b>Imagined Stiletto</b> · Rear view"><img src="assets/design/stiletto-3-06.webp" width="1100" height="1100" loading="lazy" alt="Rear view"></button><figcaption>Rear</figcaption></figure>
+        <figure><button type="button" data-lb="image" data-group="stiletto" data-src="assets/design/stiletto-3-07-full.webp" data-caption="<b>Imagined Stiletto</b> · Rear three-quarter view, opposite side"><img src="assets/design/stiletto-3-07.webp" width="1100" height="1100" loading="lazy" alt="Rear three-quarter view, opposite side"></button><figcaption>Rear three-quarter, opposite</figcaption></figure>
+        <figure><button type="button" data-lb="image" data-group="stiletto" data-src="assets/design/stiletto-3-08-full.webp" data-caption="<b>Imagined Stiletto</b> · Side profile, opposite side"><img src="assets/design/stiletto-3-08.webp" width="1100" height="1100" loading="lazy" alt="Side profile, opposite side"></button><figcaption>Side profile, opposite</figcaption></figure>
+        <figure><button type="button" data-lb="image" data-group="stiletto" data-src="assets/design/stiletto-3-09-full.webp" data-caption="<b>Imagined Stiletto</b> · Front three-quarter view, opposite side"><img src="assets/design/stiletto-3-09.webp" width="1100" height="1100" loading="lazy" alt="Front three-quarter view, opposite side"></button><figcaption>Front three-quarter, opposite</figcaption></figure>
+      </div>
+
+      <div class="proto">
+        <div>
+          <figure><button type="button" data-lb="image" data-group="stiletto" data-src="assets/design/stiletto-4-10-full.webp" data-caption="<b>Imagined Stiletto</b> · All prototypes, with a Roberto Cavalli stiletto for reference and the 3D-printed shoe"><img src="assets/design/stiletto-4-10.webp" width="1200" height="754" loading="lazy" alt="Paper prototypes, a Roberto Cavalli stiletto, and the pink 3D print side by side"></button></figure>
+          <p class="cap">Every prototype side by side, with a Roberto Cavalli stiletto for reference and the 3D-printed Imagined Stiletto.</p>
+        </div>
+        <div>
+          <figure><button type="button" data-lb="image" data-group="stiletto" data-src="assets/design/stiletto-4-11-full.webp" data-caption="<b>Imagined Stiletto</b> · 3D print of the final prototype"><img src="assets/design/stiletto-4-11.webp" width="921" height="1200" loading="lazy" alt="Pink 3D print of the final stiletto prototype"></button></figure>
+          <p class="cap">3D print of the final prototype, before final materials and inserts.</p>
+        </div>
+      </div>
+
+      <div class="duo">
+        <article class="tile">
+          <h3>Call Chuck Stone</h3>
+          <div class="tags"><span>Print</span><span>Photography</span><span>Art direction</span></div>
+          <p>A late-night-infomercial poster for hand-signed prints of “Where is J.M.B.” and “Mona Lisa,” shot from above on a floor papered with the prints themselves.</p>
+          <div class="media poster">
+            <button type="button" data-lb="image" data-group="poster" data-src="assets/design/call-chuck-stone-full.webp" data-caption="<b>Call Chuck Stone</b> · Poster">
+              <img src="assets/design/call-chuck-stone.webp" width="1128" height="1400" loading="lazy" alt="Poster: a figure in a suit lying on a floor covered in art prints, with yellow type reading We've got you covered, Call Chuck Stone, and a starburst reading Hand signed, only $4.99">
+            </button>
+          </div>
+        </article>
+
+        <article class="tile">
+          <h3>Chuck Stone Clothing Company</h3>
+          <div class="tags"><span>Clothing design</span><span>Brand</span><span>3D animation</span></div>
+          <p>Clothing, website, and brand for my own label. These walk cycles put the garments on a 3D figure: one rendered straight, one broken into low-poly facets.</p>
+          <div class="media pair">
+            <figure>
+              <video class="loop" src="assets/video/clothing-walk.mp4" poster="assets/video/clothing-walk.jpg" muted loop playsinline preload="none" aria-label="3D figure walking in Chuck Stone Clothing pieces"></video>
+              <figcaption class="cap">Walk cycle</figcaption>
+            </figure>
+            <figure>
+              <video class="loop" src="assets/video/clothing-lowpoly.mp4" poster="assets/video/clothing-lowpoly.jpg" muted loop playsinline preload="none" aria-label="Low-poly version of the 3D figure walking, captioned it isn't easy being low poly"></video>
+              <figcaption class="cap">“It isn’t easy being low poly…”</figcaption>
+            </figure>
+          </div>
+        </article>
+      </div>
+
+      <div class="duo">
+        <article class="tile">
+          <h3>Graduation Bear for OnThatNote TV</h3>
+          <div class="tags"><span>Freelance</span><span>Character design</span><span>Vinyl figure</span></div>
+          <p>Visual design for streamer OnThatNote TV’s vinyl action figure series. The figure turns once while the render style changes underneath it: soft 3D, flat toon, outlined, then pixel. The final models were prepared for overseas polyethylene mold filling.</p>
+          <div class="media">
+            <video class="loop square" src="assets/video/graduation-bear.mp4" poster="assets/video/graduation-bear.jpg" muted loop playsinline preload="none" aria-label="A 3D bear figure in a varsity jacket and chain turning, switching between render styles"></video>
+          </div>
+        </article>
+
+        <article class="tile">
+          <h3>Proteus: Art Museum Collection</h3>
+          <div class="tags"><span>Co-founder</span><span>App design</span><span>React Native</span></div>
+          <p>Photograph a painting on the museum wall and Proteus names it, reads you its wall label, and adds it to your collection. A map shows the museums near you and the works to look for inside, 112 sets give a visit a purpose, and each profile is hung like a gallery. I lead the technical side and designed the app.</p>
+          <p>Every new collection starts with one gift: my painting <a href="#paintings">Shadow of Divine Perfection</a>. Free, with no ads and nothing to buy.</p>
+          <div class="media proteus">
+            <video class="loop" src="assets/video/proteus-app.mp4" poster="assets/video/proteus-app.jpg" muted loop playsinline preload="none" aria-label="The Proteus app on a phone, moving through its sign-in, feed, new post, and settings screens"></video>
+            <a class="btn" href="https://apps.apple.com/app/apple-store/id6826600034?pt=129630162&amp;ct=portfolio&amp;mt=8" target="_blank" rel="noopener">Get Proteus on the App Store ↗</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── 3D & Motion ─────────── -->
+  <section class="section" id="motion">
+    <div class="wrap">
+      <div class="head">
+        <h2><span class="num eyebrow">04</span>3D &amp; Motion<img src="assets/ui/swatch-yellow.webp" alt=""></h2>
+        <p>Loose bounds still need exact work. The last principle asks for an artist who covers the whole problem “with flawless technical execution.” Seven years of 3D environments and simulation in Blender, Houdini, Unreal Engine, and Reality Capture.</p>
+      </div>
+
+      <figure>
+        <div class="pano" id="pano" role="img" aria-label="360-degree render of a room filling with floodwater; drag to look around">
+          <canvas></canvas>
+          <span class="hint" id="pano-hint">↔ Drag to look around</span>
+        </div>
+        <figcaption class="cap"><b>Flood</b> · 360° render. A room filling with water, rendered as a full sphere: drag sideways to turn.</figcaption>
+      </figure>
+
+      <div class="sims" id="simulations">
+        <div class="sims-head">
+          <h3>Simulations</h3>
+          <p>Fluids, soft bodies, rigid bodies, and breaking glass. Each one sets up a few objects, lets the physics run, and keeps the result.</p>
+        </div>
+        <div class="row">
+          <figure style="--ar: 16 / 9; --g: 1.7778">
+            <video class="loop" src="assets/video/sim-bitcoin-melt.mp4" poster="assets/video/sim-bitcoin-melt.jpg" muted loop playsinline preload="none" aria-label="A black Bitcoin symbol melting into a pool of liquid gold on a green floor"></video>
+            <figcaption class="cap"><b>Bitcoin Melt</b> · Houdini, melting solid</figcaption>
+          </figure>
+          <figure style="--ar: 9 / 16; --g: .5625">
+            <video class="loop" src="assets/video/cubes.mp4" poster="assets/video/cubes.jpg" muted loop playsinline preload="none" aria-label="A pill shape pressing into a stone bowl of orange cubes, from 50 cubes up to 1000"></video>
+            <figcaption class="cap"><b>50 to 1000 Cubes</b> · Rigid bodies</figcaption>
+          </figure>
+          <figure style="--ar: 9 / 16; --g: .5625">
+            <video class="loop" src="assets/video/sim-glass-case.mp4" poster="assets/video/sim-glass-case.jpg" muted loop playsinline preload="none" aria-label="A pink sphere breaks the glass case around a dancing figure on a marble plinth"></video>
+            <figcaption class="cap"><b>Glass Case</b> · Shattering glass</figcaption>
+          </figure>
+        </div>
+        <div class="row">
+          <figure style="--ar: 9 / 16; --g: 1">
+            <video class="loop" src="assets/video/sim-rings.mp4" poster="assets/video/sim-rings.jpg" muted loop playsinline preload="none" aria-label="A drop of black fluid squeezing through two glass rings into a stone bowl"></video>
+            <figcaption class="cap"><b>Rings</b> · Viscous fluid</figcaption>
+          </figure>
+          <figure style="--ar: 9 / 16; --g: 1">
+            <video class="loop" src="assets/video/sim-gears.mp4" poster="assets/video/sim-gears.jpg" muted loop playsinline preload="none" aria-label="A black soft block crushed between two turning gears, falling through a glass ring"></video>
+            <figcaption class="cap"><b>Gears</b> · Soft body</figcaption>
+          </figure>
+          <figure style="--ar: 9 / 16; --g: 1">
+            <video class="loop" src="assets/video/sim-gears-fluid.mp4" poster="assets/video/sim-gears-fluid.jpg" muted loop playsinline preload="none" aria-label="Black fluid pressed between gears, splashing through glass rings"></video>
+            <figcaption class="cap"><b>Gears, Fluid</b> · Liquid</figcaption>
+          </figure>
+          <figure style="--ar: 9 / 16; --g: 1">
+            <video class="loop" src="assets/video/sim-sphere.mp4" poster="assets/video/sim-sphere.jpg" muted loop playsinline preload="none" aria-label="A black sphere held between four chrome rings, deformed as two cones approach"></video>
+            <figcaption class="cap"><b>Sphere</b> · Soft body</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── Film ─────────── -->
+  <section class="section room" id="film">
+    <div class="wrap">
+      <div class="head">
+        <h2><span class="num eyebrow">05</span>Film<img src="assets/ui/swatch-red.webp" alt=""></h2>
+        <p>Shorts and performance pieces that leave the meaning for the viewer to make. Shot, built, and cut myself. Hover to preview; click to watch with sound.</p>
+      </div>
+
+      <div class="films">
+        <div class="row">
+          <div class="stack" style="--g: 1">
+            <figure style="--ar: 16 / 9">
+              <button type="button" class="poster-btn" data-lb="video" data-src="assets/video/samurai.mp4" data-caption="<b>Untitled (Samurai)</b> · 3D short · 0:45">
+                <video src="assets/video/samurai.mp4" muted loop playsinline preload="none"></video>
+                <img src="assets/video/samurai.jpg" alt="A pagoda burning under a red sun" loading="lazy">
+                <span class="play">Watch · 0:45</span>
+              </button>
+              <figcaption class="cap"><b>Untitled (Samurai)</b> · 3D short</figcaption>
+            </figure>
+            <figure style="--ar: 16 / 9">
+              <button type="button" class="poster-btn" data-lb="video" data-src="assets/video/stranger-things.mp4" data-caption="<b>Stranger Things</b> · Short film · 1:42">
+                <video src="assets/video/stranger-things.mp4" muted loop playsinline preload="none"></video>
+                <img src="assets/video/stranger-things.jpg" alt="A dark figure standing in a doorway at the top of the stairs" loading="lazy">
+                <span class="play">Watch · 1:42</span>
+              </button>
+              <figcaption class="cap"><b>Stranger Things</b> · Short film</figcaption>
+            </figure>
+          </div>
+          <figure class="tall" style="--ar: 9 / 16; --g: .6">
+            <button type="button" class="poster-btn" data-lb="video" data-src="assets/video/burn.mp4" data-caption="<b>Untitled (Burn)</b> · Performance · 1:44">
+              <video src="assets/video/burn.mp4" muted loop playsinline preload="none"></video>
+              <img src="assets/video/burn.jpg" alt="The artist setting a painting alight on a wooden stand in the snow at dusk" loading="lazy">
+              <span class="play">Watch · 1:44</span>
+            </button>
+            <figcaption class="cap"><b>Untitled (Burn)</b> · Performance</figcaption>
+          </figure>
+          <figure class="tall" style="--ar: 9 / 16; --g: .6">
+            <button type="button" class="poster-btn" data-lb="video" data-src="assets/video/timeless.mp4" data-caption="<b>Timeless</b> · Live action and 3D · 0:24">
+              <video src="assets/video/timeless.mp4" muted loop playsinline preload="none"></video>
+              <img src="assets/video/timeless.jpg" alt="First-person view of hands by the River Liffey in Dublin" loading="lazy">
+              <span class="play">Watch · 0:24</span>
+            </button>
+            <figcaption class="cap"><b>Timeless</b> · Live action and 3D</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── Instagram ─────────── -->
+  <section class="section" id="instagram">
+    <div class="wrap">
+      <div class="head">
+        <h2><span class="num eyebrow">06</span>Instagram<img src="assets/ui/swatch-yellow.webp" alt=""></h2>
+        <p>Paintings in progress and the ideas behind them, posted as reels at <a href="https://www.instagram.com/chuckstoneofficial/" target="_blank" rel="noopener">@chuckstoneofficial</a>.</p>
+      </div>
+      <div class="ig">
+        <div class="ig-stats">
+          <div class="ig-id">
+            <img class="ig-avatar" src="assets/photos/portrait-drawn-face.webp" width="928" height="1152" loading="lazy" alt="Profile photo: Chuck Stone with a face drawn over his own in black marker">
+            <a class="ig-handle" href="https://www.instagram.com/chuckstoneofficial/" target="_blank" rel="noopener">@chuckstoneofficial</a>
+          </div>
+          <dl>
+            <div><dt>Total views</dt><dd>500K+</dd></div>
+            <div><dt>Dedicated followers</dt><dd>~1,500</dd></div>
+          </dl>
+          <a class="btn solid" href="https://www.instagram.com/chuckstoneofficial/" target="_blank" rel="noopener">Follow on Instagram ↗</a>
+        </div>
+        <div class="reels" aria-label="Three reels from @chuckstoneofficial">
+          <figure>
+            <button type="button" class="reel" data-lb="image" data-group="reels" data-src="assets/photos/reel-mona-lisa.webp" data-caption="<b>“Mona Lisa”</b> reel · 206K views">
+              <img src="assets/photos/reel-mona-lisa.webp" width="782" height="1600" loading="lazy" alt="Reel: a brush adding red paint to the taped-over Mona Lisa, captioned adding a detail that only masters of color theory can understand, 206K views">
+            </button>
+            <figcaption class="cap"><b>206K views</b> · “Mona Lisa”</figcaption>
+          </figure>
+          <figure>
+            <button type="button" class="reel" data-lb="image" data-group="reels" data-src="assets/photos/reel-rare-aesthetic.webp" data-caption="<b>“Rare aesthetic”</b> reel · 4.7K views">
+              <img src="assets/photos/reel-rare-aesthetic.webp" width="782" height="1600" loading="lazy" alt="Reel in the studio, captioned rare aesthetic: artists that choose to be abstract even though they have skills to do hyperrealism stuff, 4.7K views">
+            </button>
+            <figcaption class="cap"><b>4.7K views</b> · Abstract by choice</figcaption>
+          </figure>
+          <figure>
+            <button type="button" class="reel" data-lb="image" data-group="reels" data-src="assets/photos/reel-basquiat.webp" data-caption="<b>“Where is Basquiat”</b> reel · 2.4K views">
+              <img src="assets/photos/reel-basquiat.webp" width="782" height="1600" loading="lazy" alt="Reel: drawing in white over the painted Basquiat portrait, 2.4K views">
+            </button>
+            <figcaption class="cap"><b>2.4K views</b> · “Where is Basquiat”</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── About ─────────── -->
+  <section class="section" id="about">
+    <div class="wrap">
+      <div class="head">
+        <h2><span class="num eyebrow">07</span>About<img class="under" src="assets/ui/swatch-blue.webp" alt=""></h2>
+      </div>
+      <div class="portraits">
+        <button type="button" data-lb="image" data-group="portraits" data-src="assets/photos/portrait-drawn-face.webp" data-caption="<b>Chuck Stone</b> · Portrait">
+          <img src="assets/photos/portrait-drawn-face.webp" width="928" height="1152" loading="lazy" alt="Sepia portrait of Chuck Stone, hands on his face, with an eye, ear, and teeth drawn over it in thick black marker">
+        </button>
+        <button type="button" data-lb="image" data-group="portraits" data-src="assets/photos/studio-easel.webp" data-caption="<b>Chuck Stone</b> · In the studio, with LVE on the easel">
+          <img src="assets/photos/studio-easel.webp" width="904" height="1600" loading="lazy" alt="Black and white photo of Chuck Stone in the studio beside an easel holding LVE, the edges swirled into a blur">
+        </button>
+        <button type="button" data-lb="image" data-group="portraits" data-src="assets/photos/with-self-portrait.webp" data-caption="<b>Chuck Stone</b> · With Self Portrait">
+          <img src="assets/photos/with-self-portrait.webp" width="908" height="1134" loading="lazy" alt="Glitched photo of Chuck Stone in front of a cracked white wall where Self Portrait hangs in a gold frame">
+        </button>
+      </div>
+      <div class="about">
+        <div class="intro">
+          <p>I’m Chuck Stone, a designer of art. I study Design and Mathematics at Northeastern University on a merit-based scholarship, with a semester abroad at University College Dublin, and I paint, model, and film by one method I call Vagueism.</p>
+          <p>My first instinct is always to make a problem clear so I can start solving it. Vagueism is how I push back: I take time to find the bounds of a problem before answering it, and I leave the person on the other side room to make their own meaning.</p>
+          <p>I co-founded Proteus, an art museum collection app now on the App Store, where I lead the technical side, and I freelance in visual and product design, from vinyl action figures to branded footwear.</p>
+          <div class="actions">
+            <a class="btn solid" href="Charles_Harmon_Stone_Resume.html">Interactive resume</a>
+            <a class="btn" href="assets/Charles_Harmon_Stone_Resume.pdf" download>↓ PDF resume</a>
+            <button class="btn" type="button" id="copy-email" data-email="charlietighehs@gmail.com">Copy email</button>
+          </div>
+        </div>
+
+        <div class="cv">
+          <section>
+            <h4>Experience</h4>
+            <div class="item"><b>Proteus AI LLC: Co-Founder &amp; Technical Lead</b><span>Sept 2025 – present · <a href="https://apps.apple.com/app/apple-store/id6826600034?pt=129630162&amp;ct=portfolio&amp;mt=8" target="_blank" rel="noopener">Proteus on the App Store</a></span></div>
+            <div class="item"><b>Freelance Interdisciplinary Designer</b><span>Jan 2023 – present · OnThatNote TV vinyl figure series; branded footwear for T-Mobile and nexa.org</span></div>
+          </section>
+          <section>
+            <h4>Education</h4>
+            <div class="item"><b>Northeastern University, Boston</b><span>B.S. Design and Mathematics · expected May 2029</span></div>
+            <div class="item"><b>University College Dublin</b><span>Semester abroad</span></div>
+          </section>
+          <section>
+            <h4>Exhibiting &amp; clubs</h4>
+            <ul>
+              <li>Exhibiting artist, Cambridge Art Association</li>
+              <li>Member, Northeastern Art Blanche</li>
+            </ul>
+          </section>
+          <section>
+            <h4>Tools</h4>
+            <ul>
+              <li>Blender · Houdini · Unreal Engine · Reality Capture</li>
+              <li>Photoshop · Illustrator · After Effects · Premiere Pro · InDesign · Lightroom · Fresco</li>
+              <li>React Native · full-stack web · Claude &amp; Claude Code · MCP pipelines</li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Chuck Stone Design · <span id="yr">2026</span></span>
+    <span><a href="mailto:charlietighehs@gmail.com">Email</a> · <a href="http://www.linkedin.com/in/charlie-harmon-stone-314bb3325" target="_blank" rel="noopener">LinkedIn</a> · <a href="Charles_Harmon_Stone_Resume.html">Resume</a></span>
+  </div>
+</footer>
+
+<dialog class="lb" id="lb" aria-label="Viewer">
+  <div class="lb-inner">
+    <div class="lb-stage" id="lb-stage"></div>
+    <div class="lb-cap" id="lb-cap"></div>
+  </div>
+  <button class="lb-x" id="lb-x" type="button">Close ✕</button>
+  <button class="lb-prev" id="lb-prev" type="button" aria-label="Previous">←</button>
+  <button class="lb-next" id="lb-next" type="button" aria-label="Next">→</button>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<script>
+// ── Design Mountain: the name in the hero is a set of physical letters ──
+// At rest it reads as plain type. Grab a letter (or knock the whole name down) and the
+// letters fall onto the stage floor and pile into a mountain, like the interactive resume.
+(() => {
+  const stage = document.getElementById('stage'), name = document.getElementById('name');
+  const cv = document.getElementById('mountain'), c = cv.getContext('2d');
+  const ui = document.getElementById('stage-ui'), hint = document.getElementById('stage-hint');
+  const knockBtn = document.getElementById('knock'), rebuildBtn = document.getElementById('rebuild');
+  if (!window.Matter) { ui.hidden = true; return; }
+  const { Engine, Bodies, Body, Composite, Query, Constraint, Sleeping } = Matter;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ink = getComputedStyle(document.documentElement).getPropertyValue('--ink').trim() || '#161616';
+  const swatch = new Image(); swatch.src = 'assets/ui/swatch-blue.webp';
+  let engine, W = 0, H = 0, dpr = 1, font = '', items = [], drag = null, tween = null, visible = false, looping = false, dirty = true, lastW = 0;
+
+  function build() {
+    const sr = stage.getBoundingClientRect();
+    W = sr.width; H = sr.height; dpr = Math.min(devicePixelRatio || 1, 2);
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    const cs = getComputedStyle(name);
+    font = `700 ${cs.fontSize} ${cs.fontFamily}`;
+    c.font = font;
+
+    engine = Engine.create({ gravity: { x: 0, y: 1.5 }, enableSleeping: true });
+    const T = 200;
+    Composite.add(engine.world, [
+      Bodies.rectangle(W / 2, H + T / 2, W * 3, T, { isStatic: true, friction: 0.8 }),
+      Bodies.rectangle(-T / 2, H / 2 - H, T, H * 4, { isStatic: true }),
+      Bodies.rectangle(W + T / 2, H / 2 - H, T, H * 4, { isStatic: true }),
+    ]);
+
+    items = [];
+    // the blue paint swatch under "Stone" falls too
+    const img = name.querySelector('.last img'), ir = img.getBoundingClientRect();
+    items.push(make({ img: true, x: ir.left - sr.left + ir.width / 2, y: ir.top - sr.top + ir.height / 2, w: ir.width, h: ir.height * 0.62 }));
+
+    // every letter, positioned exactly where the browser set it
+    const range = document.createRange();
+    name.querySelectorAll(':scope > span').forEach(line => {
+      const node = [...line.childNodes].find(n => n.nodeType === 3);
+      const text = node.textContent;
+      for (let i = 0; i < text.length; i++) {
+        if (text[i].trim() === '') continue;
+        range.setStart(node, i); range.setEnd(node, i + 1);
+        const r = range.getBoundingClientRect();
+        const m = c.measureText(text[i]);
+        const penX = r.left - sr.left;
+        const base = r.top - sr.top + m.fontBoundingBoxAscent;
+        const left = penX - m.actualBoundingBoxLeft, right = penX + m.actualBoundingBoxRight;
+        const top = base - m.actualBoundingBoxAscent, bottom = base + m.actualBoundingBoxDescent;
+        const cx = (left + right) / 2, cy = (top + bottom) / 2;
+        items.push(make({ ch: text[i], x: cx, y: cy, w: right - left, h: bottom - top, dx: penX - cx, dy: base - cy }));
+      }
+    });
+    stage.classList.add('live');
+    setState('rest');
+    dirty = true;
+  }
+
+  function make(o) {
+    const b = Bodies.rectangle(o.x, o.y, Math.max(o.w, 6), Math.max(o.h, 6), {
+      friction: 0.7, frictionAir: 0.01, restitution: 0.18, density: o.img ? 0.0012 : 0.002, sleepThreshold: 40,
+    });
+    Body.setStatic(b, true);            // set after creation so the body keeps its real mass for later
+    Composite.add(engine.world, b);
+    return { ...o, body: b, home: { x: o.x, y: o.y }, free: false };
+  }
+
+  function release(it, kick) {
+    if (it.free) return;
+    it.free = true;
+    Body.setStatic(it.body, false);
+    Sleeping.set(it.body, false);
+    if (kick) {
+      const side = it.body.position.x < W / 2 ? 1 : -1;      // lean toward the middle, so it piles up
+      Body.setVelocity(it.body, { x: side * Math.random() * 4 + (Math.random() - 0.5) * 6, y: -2 - Math.random() * 4 });
+      Body.setAngularVelocity(it.body, (Math.random() - 0.5) * 0.4);
+    }
+    setState(items.every(i => i.free) ? 'fallen' : 'some');
+    wake();
+  }
+
+  function setState(s) {
+    knockBtn.hidden = s === 'fallen';
+    rebuildBtn.hidden = s === 'rest';
+    hint.textContent = s === 'rest' ? 'Grab a letter and throw it.' : s === 'some' ? 'Keep going, or knock the rest down.' : 'Every block of the resume falls the same way.';
+  }
+
+  function knock() {
+    if (tween) return;
+    // bottom line first, so the lines above tumble onto loose letters instead of landing on a shelf
+    const order = items.filter(i => !i.free).sort((a, b) => b.home.y - a.home.y || Math.random() - 0.5);
+    order.forEach((it, k) => setTimeout(() => release(it, true), reduce ? 0 : k * 45));
+  }
+
+  function rebuild() {
+    if (drag) endDrag();
+    const t0 = performance.now(), dur = reduce ? 0 : 900;
+    items.forEach(it => {
+      it.from = { x: it.body.position.x, y: it.body.position.y, a: ((it.body.angle + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI };
+      Body.setStatic(it.body, true);
+    });
+    tween = { t0, dur };
+    wake();
+  }
+
+  function stepTween(now) {
+    const k = tween.dur ? Math.min(1, (now - tween.t0) / tween.dur) : 1;
+    const e = 1 - Math.pow(1 - k, 3);
+    for (const it of items) {
+      Body.setPosition(it.body, { x: it.from.x + (it.home.x - it.from.x) * e, y: it.from.y + (it.home.y - it.from.y) * e });
+      Body.setAngle(it.body, it.from.a * (1 - e));
+    }
+    if (k >= 1) { tween = null; items.forEach(it => it.free = false); setState('rest'); }
+  }
+
+  function draw() {
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c.clearRect(0, 0, W, H);
+    c.font = font; c.fillStyle = ink; c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+    for (const it of items) {
+      const b = it.body;
+      c.save();
+      c.translate(b.position.x, b.position.y);
+      c.rotate(b.angle);
+      if (it.img) { if (swatch.complete) c.drawImage(swatch, -it.w / 2, -it.h / 0.62 / 2, it.w, it.h / 0.62); }
+      else c.fillText(it.ch, it.dx, it.dy);
+      c.restore();
+    }
+  }
+
+  function moving() {
+    return tween || drag || items.some(i => i.free && !i.body.isSleeping);
+  }
+  function frame(now) {
+    if (!visible) { looping = false; return; }
+    if (tween) stepTween(now);
+    else if (moving()) Engine.update(engine, 1000 / 60);
+    if (dirty || moving()) { draw(); dirty = false; }
+    requestAnimationFrame(frame);
+  }
+  function wake() { dirty = true; if (visible && !looping) { looping = true; requestAnimationFrame(frame); } }
+
+  // grabbing letters
+  const local = e => { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
+  const hit = p => { const b = Query.point(items.map(i => i.body), p)[0]; return b && items.find(i => i.body === b); };
+  function endDrag() { if (drag) { Composite.remove(engine.world, drag); drag = null; } cv.classList.remove('grabbing'); }
+  cv.addEventListener('pointerdown', e => {
+    if (tween) return;
+    const p = local(e), it = hit(p);
+    if (!it) return;
+    e.preventDefault();
+    try { cv.setPointerCapture(e.pointerId); } catch {}
+    release(it, false);
+    drag = Constraint.create({ pointA: p, bodyB: it.body, pointB: { x: p.x - it.body.position.x, y: p.y - it.body.position.y }, stiffness: 0.14, damping: 0.08, length: 0 });
+    Composite.add(engine.world, drag);
+    cv.classList.add('grabbing');
+    wake();
+  });
+  cv.addEventListener('pointermove', e => {
+    const p = local(e);
+    if (drag) { drag.pointA = p; Sleeping.set(drag.bodyB, false); return; }
+    cv.classList.toggle('grab', !!hit(p));
+  });
+  cv.addEventListener('pointerup', endDrag);
+  cv.addEventListener('pointercancel', endDrag);
+  knockBtn.addEventListener('click', knock);
+  rebuildBtn.addEventListener('click', rebuild);
+  swatch.onload = () => { dirty = true; wake(); };
+
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) wake(); }).observe(stage);
+  addEventListener('resize', () => {
+    if (Math.abs(stage.getBoundingClientRect().width - lastW) < 2) return;
+    lastW = stage.getBoundingClientRect().width;
+    endDrag(); tween = null; build(); wake();
+  });
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
+    lastW = stage.getBoundingClientRect().width;
+    build(); wake();
+  });
+})();
+
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.getElementById('read-manifesto').addEventListener('click', () => document.querySelector('.vg-cover button').click());
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // ── copy email (mail links don't open for every viewer) ──
+  const copyBtn = document.getElementById('copy-email');
+  copyBtn.addEventListener('click', () => {
+    const email = copyBtn.dataset.email;
+    const done = () => { copyBtn.textContent = 'Copied'; setTimeout(() => copyBtn.textContent = 'Copy email', 1800); };
+    const fallback = () => {
+      const a = document.querySelector('.hero-meta a[href^="mailto:"]');
+      const r = document.createRange(); r.selectNodeContents(a);
+      const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      a.scrollIntoView({ block: 'center' });
+    };
+    try { navigator.clipboard.writeText(email).then(done, fallback); } catch { fallback(); }
+  });
+
+  // ── top bar rule + active section ──
+  const bar = document.getElementById('bar');
+  addEventListener('scroll', () => bar.classList.toggle('scrolled', scrollY > 8), { passive: true });
+  const links = [...document.querySelectorAll('.nav a[href^="#"]')];
+  const spy = new IntersectionObserver(entries => {
+    for (const e of entries) if (e.isIntersecting) {
+      links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id));
+    }
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  document.querySelectorAll('main section[id]').forEach(s => spy.observe(s));
+
+  // ── looping clips play only while on screen ──
+  const loops = document.querySelectorAll('video.loop');
+  if (!reduce) {
+    const io = new IntersectionObserver(entries => {
+      for (const e of entries) {
+        const v = e.target;
+        if (e.isIntersecting) { v.preload = 'auto'; v.play().catch(() => {}); }
+        else v.pause();
+      }
+    }, { threshold: 0.25 });
+    loops.forEach(v => io.observe(v));
+  } else {
+    loops.forEach(v => v.setAttribute('controls', ''));
+  }
+
+  // ── film cards: muted preview on hover ──
+  document.querySelectorAll('.poster-btn').forEach(btn => {
+    const v = btn.querySelector('video');
+    if (!v || reduce) return;
+    btn.addEventListener('mouseenter', () => {
+      v.preload = 'auto';
+      v.play().then(() => btn.classList.add('previewing')).catch(() => {});
+    });
+    btn.addEventListener('mouseleave', () => { v.pause(); btn.classList.remove('previewing'); });
+  });
+
+  // ── lightbox ──
+  const lb = document.getElementById('lb'), stage = document.getElementById('lb-stage'), cap = document.getElementById('lb-cap');
+  let group = [], idx = 0;
+  function show(el) {
+    stage.replaceChildren();
+    const src = el.dataset.src;
+    let node;
+    if (el.dataset.lb === 'video') {
+      node = document.createElement('video');
+      Object.assign(node, { src, controls: true, autoplay: true, playsInline: true });
+    } else {
+      node = new Image();
+      node.src = src;
+      node.alt = el.querySelector('img')?.alt || '';
+    }
+    stage.append(node);
+    cap.innerHTML = el.dataset.caption || '';
+  }
+  function open(el) {
+    const g = el.dataset.group;
+    group = g ? [...document.querySelectorAll(`[data-lb][data-group="${g}"]`)] : [el];
+    idx = Math.max(0, group.indexOf(el));
+    lb.toggleAttribute('data-single', group.length < 2);
+    show(group[idx]);
+    lb.showModal();
+    document.querySelectorAll('.poster-btn video').forEach(v => v.pause());
+  }
+  function step(d) { if (group.length > 1) { idx = (idx + d + group.length) % group.length; show(group[idx]); } }
+  function close() { lb.close(); }
+  lb.addEventListener('close', () => stage.replaceChildren());
+  document.querySelectorAll('[data-lb]').forEach(el => el.addEventListener('click', () => open(el)));
+  document.getElementById('lb-x').onclick = close;
+  document.getElementById('lb-prev').onclick = () => step(-1);
+  document.getElementById('lb-next').onclick = () => step(1);
+  lb.addEventListener('click', e => { if (e.target === lb || e.target === stage || e.target.classList.contains('lb-inner')) close(); });
+  addEventListener('keydown', e => {
+    if (!lb.open) return;
+    if (e.key === 'ArrowRight') step(1);
+    if (e.key === 'ArrowLeft') step(-1);
+  });
+
+  // ── 360° panorama: an equirectangular render, drawn twice side by side so it wraps ──
+  const pano = document.getElementById('pano');
+  const canvas = pano.querySelector('canvas');
+  const ctx = canvas.getContext('2d');
+  const hint = document.getElementById('pano-hint');
+  const poster = new Image(); poster.src = 'assets/video/flood-360.jpg';
+  const vid = document.createElement('video');
+  Object.assign(vid, { src: 'assets/video/flood-360.mp4', muted: true, loop: true, playsInline: true, preload: 'none' });
+  vid.setAttribute('muted', ''); vid.setAttribute('playsinline', '');
+  const BAND = [0.17, 0.83];        // drop the stretched poles of the sphere
+  let offset = 0, vel = reduce ? 0 : -0.25, dragging = false, lastX = 0, lastT = 0, visible = false, touched = false;
+
+  function size() {
+    const r = pano.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2);
+    canvas.width = Math.round(r.width * d); canvas.height = Math.round(r.height * d);
+  }
+  function frame() {
+    const src = vid.readyState >= 2 ? vid : (poster.complete && poster.naturalWidth ? poster : null);
+    if (src) {
+      const sw = src.videoWidth || src.naturalWidth, sh = src.videoHeight || src.naturalHeight;
+      const sy = sh * BAND[0], bh = sh * (BAND[1] - BAND[0]);
+      const scale = canvas.height / bh, dw = sw * scale;
+      if (!dragging) { offset += vel; if (!touched || Math.abs(vel) > 0.02) vel = touched ? vel * 0.95 : vel; }
+      const x = ((offset % dw) + dw) % dw;
+      for (let k = -1; k <= Math.ceil(canvas.width / dw); k++) {
+        ctx.drawImage(src, 0, sy, sw, bh, x + k * dw, 0, dw, canvas.height);
+      }
+    }
+    if (visible) requestAnimationFrame(frame);
+  }
+  new IntersectionObserver(([e]) => {
+    const was = visible; visible = e.isIntersecting;
+    if (visible) { vid.preload = 'auto'; if (!reduce) vid.play().catch(() => {}); if (!was) requestAnimationFrame(frame); }
+    else vid.pause();
+  }, { threshold: 0.05 }).observe(pano);
+  poster.onload = () => { size(); };
+  addEventListener('resize', size); size();
+
+  pano.addEventListener('pointerdown', e => {
+    dragging = true; touched = true; lastX = e.clientX; lastT = performance.now(); vel = 0;
+    pano.setPointerCapture(e.pointerId); pano.classList.add('dragging'); hint.style.opacity = 0;
+  });
+  pano.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const d = (e.clientX - lastX) * (canvas.width / pano.clientWidth), now = performance.now();
+    offset += d; vel = d / Math.max(1, (now - lastT) / 16.7); lastX = e.clientX; lastT = now;
+  });
+  const end = () => { dragging = false; pano.classList.remove('dragging'); };
+  pano.addEventListener('pointerup', end); pano.addEventListener('pointercancel', end);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Charles Harmon Stone — Resume</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    font-family: Helvetica, Arial, sans-serif;
+    background: #e8e8e8;
+  }
+
+  #scroll-container {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    z-index: 2;
+  }
+
+  #scroll-spacer {
+    width: 100%;
+    pointer-events: none;
+  }
+
+  canvas {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  #ui {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    gap: 14px;
+    pointer-events: auto;
+  }
+
+  #ui button, #ui a {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px 24px;
+    border: 2px solid #1a1a1a;
+    background: rgba(255,255,255,0.85);
+    color: #1a1a1a;
+    cursor: pointer;
+    text-decoration: none;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+    border-radius: 0;
+  }
+
+  #ui button:hover, #ui a:hover {
+    background: #1a1a1a;
+    color: #fff;
+  }
+
+  #ui { width: max-content; max-width: calc(100% - 24px); flex-wrap: wrap; justify-content: center; }
+  #ui .short { display: none; }
+  @media (max-width: 560px) {
+    #ui { gap: 8px; bottom: 26px; }
+    #ui button, #ui a { font-size: 11px; padding: 8px 12px; letter-spacing: 0.06em; }
+    #ui .long { display: none; }
+    #ui .short { display: inline; }
+  }
+
+  #footer-credit {
+    position: fixed;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(26,26,26,0.4);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<div id="scroll-container">
+  <div id="scroll-spacer"></div>
+</div>
+
+<canvas id="canvas"></canvas>
+
+<div id="footer-credit">Chuck Stone Design 2026</div>
+
+<div id="ui">
+  <a id="portfolio-btn" href="index.html">← Portfolio</a>
+  <button id="reset-btn">↻ Reset</button>
+  <a id="download-btn" href="assets/Charles_Harmon_Stone_Resume.pdf" download>↓ <span class="long">Download Paper Resume</span><span class="short">PDF</span></a>
+</div>
+
+<script>
+// ─── CONFIG ───
+const BREAK_Y_FRAC = 0.35;
+const GRAVITY_SCALE = 1.8;
+const GROUND_Y_FRAC = 0.93;
+const WALL_THICKNESS = 60;
+const RESTITUTION = 0.25;
+const FRICTION = 0.6;
+const LETTER_DENSITY = 0.004;
+const SLEEP_SPEED = 0.35;
+const LINE_GAP = 1.35;
+
+// Scroll tuning — how many scroll-pixels move content 1 screen-pixel
+const SCROLL_RATIO = 18;           // 6px of scroll = 1px of movement → very heavy
+
+// Spacing between blocks (in screen px gap between bottom of one block and top of next)
+const BLOCK_SPACING = 40;
+
+// Global text scale — increase to make all text bigger, decrease to make it smaller (1.0 = default)
+const TEXT_SCALE = 0.86;
+
+// ─── RESUME DATA ───
+const sections = [
+  { lines: [
+    { text: "scroll to continue ↓", size: 22, bold: false },
+  ]},
+
+  { lines: [
+    { text: "Charles Harmon Stone", size: 64, bold: true },
+  ]},
+
+  { lines: [
+    { text: "Boston, MA", size: 34, bold: false },
+  ]},
+
+  { lines: [
+    { text: "charlietighehs@gmail.com", size: 26, bold: false, link: "mailto:charlietighehs@gmail.com" },
+    { text: "LinkedIn · Proteus on the App Store", size: 22, bold: false, links: [
+      { text: "LinkedIn", url: "http://www.linkedin.com/in/charlie-harmon-stone-314bb3325" },
+      { text: "Proteus on the App Store", url: "https://apps.apple.com/app/apple-store/id6826600034?pt=129630162&ct=portfolio&mt=8" },
+    ]},
+  ]},
+
+  { lines: [
+    { text: "Education", size: 38, bold: true },
+    { text: "Northeastern University — Boston, MA", size: 26, bold: true },
+    { text: "Bachelor of Science: Design and Mathematics · Expected May 2029", size: 22, bold: false },
+    { text: "Northeastern Merit-Based Scholarship Recipient", size: 22, bold: false },
+    { text: "Semester abroad in Ireland at University College Dublin", size: 22, bold: false },
+  ]},
+
+  { lines: [
+    { text: "Relevant Coursework", size: 32, bold: true },
+    { text: "Multivariable Calculus, Calculus II for Scientists and Engineers", size: 22, bold: false },
+    { text: "Design Process + Practices, Representational Drawing", size: 22, bold: false },
+    { text: "Designing Interactive Experiences, Design Perspectives", size: 22, bold: false },
+    { text: "Advanced Writing", size: 22, bold: false },
+  ]},
+
+  { lines: [
+    { text: "Proteus AI LLC — Co-Founder & Technical Lead", size: 32, bold: true },
+    { text: "Sept 2025 – Present · Proteus on the App Store", size: 22, bold: false, links: [
+      { text: "Proteus on the App Store", url: "https://apps.apple.com/app/apple-store/id6826600034?pt=129630162&ct=portfolio&mt=8" },
+    ]},
+    { text: "Founded an AI-powered manufacturing marketplace that connects", size: 22, bold: false },
+    { text: "customers with manufacturers through intelligent matching", size: 22, bold: false },
+    { text: "Architected full-stack web and React Native mobile apps:", size: 22, bold: false },
+    { text: "AI Smart Search, social feed, camera, liquid glass UI on Android", size: 22, bold: false },
+    { text: "Designing subscription monetization and AI usage tracking", size: 22, bold: false },
+    { text: "Built a CRM outreach system for 75+ contacts across", size: 22, bold: false },
+    { text: "VCs, accelerators, and manufacturing partners", size: 22, bold: false },
+  ]},
+
+  { lines: [
+    { text: "Freelance Interdisciplinary Designer", size: 32, bold: true },
+    { text: "Jan 2023 – Present", size: 22, bold: false },
+    { text: "Visual design for streamer OnThatNote TV's vinyl action figure series", size: 22, bold: false },
+    { text: "B2B manufacturer communication: 3D models for overseas", size: 22, bold: false },
+    { text: "polyethylene mold filling", size: 22, bold: false },
+    { text: "High-fidelity 3D assets in Blender, Houdini, Unreal Engine,", size: 22, bold: false },
+    { text: "and Reality Capture", size: 22, bold: false },
+    { text: "Brand and marketing visuals with the full Adobe Creative Suite:", size: 22, bold: false },
+    { text: "branded footwear for T-Mobile and nexa.org", size: 22, bold: false },
+    { text: "Website, brand ecosystem, clothing for Chuck Stone Clothing Company", size: 22, bold: false },
+  ]},
+
+  { lines: [
+    { text: "3D & Visual Production", size: 32, bold: true },
+    { text: "Blender · Houdini · Unreal Engine · Reality Capture", size: 22, bold: false },
+    { text: "3D web embeds and product visualization", size: 22, bold: false },
+  ]},
+
+  { lines: [
+    { text: "Adobe Creative Suite", size: 32, bold: true },
+    { text: "Photoshop · Illustrator · After Effects · Premiere Pro", size: 22, bold: false },
+    { text: "InDesign · Lightroom · Fresco", size: 22, bold: false },
+  ]},
+
+  { lines: [
+    { text: "Development & AI", size: 32, bold: true },
+    { text: "React Native design · Full-stack web design", size: 22, bold: false },
+    { text: "Claude & Claude Code · AI prompting theory", size: 22, bold: false },
+    { text: "MCP pipelines (VS Code, Blender, Adobe Suite)", size: 22, bold: false },
+  ]},
+
+  { lines: [
+    { text: "Languages", size: 32, bold: true },
+    { text: "French IV · English (native)", size: 22, bold: false },
+  ]},
+
+  { lines: [
+    { text: "Interests and Activities", size: 32, bold: true },
+    { text: "7 years of interdisciplinary 3D and 2D design experience", size: 22, bold: false },
+    { text: "across professional and personal projects", size: 22, bold: false },
+    { text: "3 years of summer lifeguarding: communicating with patrons,", size: 22, bold: false },
+    { text: "overcoming language barriers, saving victims", size: 22, bold: false },
+    { text: "Exhibiting artist with the Cambridge Art Association", size: 22, bold: false },
+    { text: "Northeastern Art Blanche club member", size: 22, bold: false },
+    { text: "Personal: oil painting, fitness & strength training,", size: 22, bold: false },
+    { text: "action sports, art history, music", size: 22, bold: false },
+  ]},
+
+  { lines: [
+    { text: "See the work ↗", size: 32, bold: true, link: "index.html" },
+  ]},
+
+];
+
+const NUM = sections.length;
+
+// ─── CANVAS SETUP ───
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const scrollContainer = document.getElementById('scroll-container');
+const scrollSpacer = document.getElementById('scroll-spacer');
+const resetBtn = document.getElementById('reset-btn');
+
+let W, H, dpr;
+let TITLE_BOTTOM = 0;  // computed: bottom edge of the Design Mountain title
+let BREAK_Y = 0;
+
+function resizeCanvas() {
+  dpr = window.devicePixelRatio || 1;
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  BREAK_Y = H * BREAK_Y_FRAC;
+
+  // Measure title height
+  const titleSize = getTitleSize();
+  TITLE_BOTTOM = 24 + titleSize + 16; // top padding + font + gap
+}
+
+// Largest title size (up to 120px) that fits the window width with a 16px margin each side.
+function getTitleSize() {
+  let size = Math.min(W * 0.12, 120);
+  ctx.save();
+  ctx.font = `bold ${size}px Helvetica, Arial, sans-serif`;
+  const w = ctx.measureText('"Design Mountain"').width;
+  ctx.restore();
+  if (w > W - 32) size *= (W - 32) / w;
+  return size;
+}
+resizeCanvas();
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  rebuildPhysics();
+  updateSectionSizes();
+  computeBlockPositions();
+  updateScrollHeight();
+});
+
+// ─── BLOCK POSITIONS (in screen-space, relative to scroll) ───
+// Each block has a "restY" — its natural center-Y if scroll were infinite.
+// Blocks are stacked vertically starting just below TITLE_BOTTOM.
+// As the user scrolls, all blocks translate downward.
+// effectiveY = restY + scrollOffset  where scrollOffset = scrollY / SCROLL_RATIO
+
+let blockPositions = []; // { restY, height }
+
+function getBlockHeight(sec) {
+  const lineHeights = sec.lines.map(l => l.size * LINE_GAP);
+  return lineHeights.reduce((a, b) => a + b, 0);
+}
+
+function computeBlockPositions() {
+  blockPositions = [];
+  // Stack blocks UPWARD from 0. Block 0 sits at restY=0 (right at TITLE_BOTTOM).
+  // Block 1 is above it, block 2 above that, etc.
+  // Scrolling adds to screenY, pushing everything downward into view.
+
+  const heights = sections.map((s, i) => getBlockHeight(s));
+
+  // Block 0 ("scroll to continue ↓") offset down so it starts visibly below the title
+  blockPositions.push({ restY: 60, height: heights[0] });
+
+  let cursor = -(heights[0] / 2 + BLOCK_SPACING);
+  for (let i = 1; i < NUM; i++) {
+    cursor -= heights[i] / 2;
+    blockPositions.push({ restY: cursor, height: heights[i] });
+    cursor -= heights[i] / 2 + BLOCK_SPACING;
+  }
+}
+
+function getBlockLayout(sec) {
+  const lineHeights = sec.lines.map(l => l.size * LINE_GAP);
+  const totalH = lineHeights.reduce((a, b) => a + b, 0);
+  const offsets = [];
+  let y = -totalH / 2;
+  for (let i = 0; i < lineHeights.length; i++) {
+    y += lineHeights[i] / 2;
+    offsets.push(y);
+    y += lineHeights[i] / 2;
+  }
+  return offsets;
+}
+
+computeBlockPositions();
+
+// ─── SCROLL HEIGHT ───
+function updateScrollHeight() {
+  // The last block has the most negative restY. We need enough scroll so that:
+  // TITLE_BOTTOM + restY_last + (totalScroll / SCROLL_RATIO) >= BREAK_Y
+  // totalScroll >= (BREAK_Y - TITLE_BOTTOM - restY_last) * SCROLL_RATIO
+  const lastRestY = blockPositions[NUM - 1].restY;
+  // + H: the scroll container can only scroll (height - H), so the last block must still reach the line
+  const totalScroll = (BREAK_Y - TITLE_BOTTOM - lastRestY) * SCROLL_RATIO + 800 + H;
+  scrollSpacer.style.height = Math.max(totalScroll, H * 2) + 'px';
+}
+updateScrollHeight();
+
+// ─── MATTER.JS SETUP ───
+const { Engine, Bodies, Body, Composite } = Matter;
+let engine, world, ground, wallL, wallR;
+let letterBodies = [];
+let triggeredSections = new Set();
+let linkHitAreas = [];
+
+function initPhysics() {
+  engine = Engine.create({
+    gravity: { x: 0, y: GRAVITY_SCALE },
+    enableSleeping: true
+  });
+  world = engine.world;
+
+  const groundY = H * GROUND_Y_FRAC;
+  ground = Bodies.rectangle(W / 2, groundY + WALL_THICKNESS / 2, W + 200, WALL_THICKNESS, {
+    isStatic: true, friction: FRICTION, restitution: RESTITUTION * 0.5
+  });
+  wallL = Bodies.rectangle(-WALL_THICKNESS / 2, H / 2, WALL_THICKNESS, H * 3, {
+    isStatic: true, friction: FRICTION
+  });
+  wallR = Bodies.rectangle(W + WALL_THICKNESS / 2, H / 2, WALL_THICKNESS, H * 3, {
+    isStatic: true, friction: FRICTION
+  });
+
+  Composite.add(world, [ground, wallL, wallR]);
+}
+
+function rebuildPhysics() {
+  if (engine) Engine.clear(engine);
+  letterBodies = [];
+  triggeredSections.clear();
+  initPhysics();
+}
+
+initPhysics();
+
+// ─── TEXT HELPERS ───
+function getFont(size, bold) {
+  return `${bold ? 'bold' : 'normal'} ${size}px Helvetica, Arial, sans-serif`;
+}
+
+function measureLetters(text, fontSize, bold) {
+  ctx.font = getFont(fontSize, bold);
+  const letters = [];
+  let totalWidth = 0;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const w = ctx.measureText(ch).width;
+    letters.push({ char: ch, width: w, offset: totalWidth });
+    totalWidth += w;
+  }
+  return { letters, totalWidth };
+}
+
+// Link spans inside a line: a whole-line `link`, or `links` that name the words to link.
+function linkRanges(line) {
+  if (line.link) return [{ start: 0, end: line.text.length, url: line.link }];
+  if (!line.links) return [];
+  return line.links.map(l => {
+    const start = line.text.indexOf(l.text);
+    return { start, end: start + l.text.length, url: l.url };
+  }).filter(r => r.start >= 0);
+}
+
+function linkAt(ranges, i) {
+  return ranges.find(r => i >= r.start && i < r.end);
+}
+
+// Split a line into plain and linked runs, in order.
+function lineSegments(line) {
+  const ranges = linkRanges(line).sort((a, b) => a.start - b.start);
+  const segs = [];
+  let i = 0;
+  for (const r of ranges) {
+    if (r.start > i) segs.push({ text: line.text.slice(i, r.start) });
+    segs.push({ text: line.text.slice(r.start, r.end), url: r.url });
+    i = r.end;
+  }
+  if (i < line.text.length) segs.push({ text: line.text.slice(i) });
+  return segs;
+}
+
+function openLink(url) {
+  // A real link click, so it also works where window.open is blocked.
+  const a = document.createElement('a');
+  a.href = url;
+  if (/^https?:/i.test(url)) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+// ─── TRIGGER SECTION ───
+function triggerSection(sIdx, anchorY) {
+  if (triggeredSections.has(sIdx)) return;
+  triggeredSections.add(sIdx);
+
+  const sec = sections[sIdx];
+  const offsets = getBlockLayout(sec);
+
+  for (let li = 0; li < sec.lines.length; li++) {
+    const line = sec.lines[li];
+    const lineY = anchorY + offsets[li];
+    const { letters, totalWidth } = measureLetters(line.text, line.size, line.bold);
+    const startX = (W - totalWidth) / 2;
+    const ranges = linkRanges(line);
+
+    for (let ci = 0; ci < letters.length; ci++) {
+      const l = letters[ci];
+      if (l.char === ' ') continue;
+      const cx = startX + l.offset + l.width / 2;
+      const cy = lineY;
+      const bw = Math.max(l.width * 0.95, 4);
+      const bh = line.size * 0.82;
+
+      const body = Bodies.rectangle(cx, cy, bw, bh, {
+        restitution: RESTITUTION,
+        friction: FRICTION,
+        density: LETTER_DENSITY,
+        angle: (Math.random() - 0.5) * 0.06,
+        frictionAir: 0.012,
+        sleepThreshold: 30,
+      });
+
+      Body.applyForce(body, body.position, {
+        x: (Math.random() - 0.5) * 0.01, y: 0
+      });
+
+      Composite.add(world, body);
+      letterBodies.push({
+        body, char: l.char, fontSize: line.size,
+        bold: line.bold, frozen: false,
+        color: linkAt(ranges, ci) ? '#2563eb' : '#1a1a1a'
+      });
+    }
+  }
+}
+
+// True when no still-moving letter sits where a new block would break apart.
+// Frozen letters don't count: if the pile itself reaches the line, the block breaks anyway.
+function spawnBandClear(blockHeight) {
+  const half = blockHeight / 2 + 12;
+  for (const lb of letterBodies) {
+    if (!lb.frozen && Math.abs(lb.body.position.y - BREAK_Y) < half) return false;
+  }
+  return true;
+}
+
+// ─── FREEZE SLOW BODIES ───
+function freezeSlowBodies() {
+  for (const lb of letterBodies) {
+    if (lb.frozen) continue;
+    const v = lb.body.velocity;
+    const speed = Math.sqrt(v.x * v.x + v.y * v.y);
+    const angSpeed = Math.abs(lb.body.angularVelocity);
+    if (speed < SLEEP_SPEED && angSpeed < 0.05) {
+      Body.setStatic(lb.body, true);
+      lb.frozen = true;
+    }
+  }
+}
+
+// ─── TEXT RENDERING ───
+function drawChar(ch, x, y, fontSize, bold, angle, alpha, color) {
+  ctx.save();
+  ctx.translate(x, y);
+  if (angle) ctx.rotate(angle);
+  ctx.font = getFont(fontSize, bold);
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = color || '#1a1a1a';
+  ctx.fillText(ch, 0, 0);
+  ctx.restore();
+}
+
+function drawBlock(sec, anchorY, alpha, blur) {
+  const offsets = getBlockLayout(sec);
+  ctx.save();
+  ctx.filter = blur > 0.3 ? `blur(${blur}px)` : 'none';
+  ctx.globalAlpha = alpha;
+
+  for (let li = 0; li < sec.lines.length; li++) {
+    const line = sec.lines[li];
+    const lineY = anchorY + offsets[li];
+    ctx.font = getFont(line.size, line.bold);
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    let x = W / 2 - ctx.measureText(line.text).width / 2;
+
+    for (const seg of lineSegments(line)) {
+      const w = ctx.measureText(seg.text).width;
+      ctx.fillStyle = seg.url ? '#2563eb' : '#1a1a1a';
+      ctx.fillText(seg.text, x, lineY);
+      if (seg.url && alpha > 0.6) {
+        linkHitAreas.push({
+          x1: x, y1: lineY - line.size * 0.6,
+          x2: x + w, y2: lineY + line.size * 0.6,
+          url: seg.url
+        });
+      }
+      x += w;
+    }
+  }
+
+  ctx.restore();
+}
+
+// ─── PERMANENT TITLE ───
+function drawTitle() {
+  ctx.save();
+  const titleSize = getTitleSize();
+  ctx.font = `bold ${titleSize}px Helvetica, Arial, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillStyle = '#1a1a1a';
+  ctx.fillText('"Design Mountain"', W / 2, 24);
+  ctx.restore();
+}
+
+// ─── BACKGROUND ───
+function drawBackground() {
+  const grad = ctx.createRadialGradient(W / 2, H * 0.4, 0, W / 2, H * 0.4, Math.max(W, H) * 0.8);
+  grad.addColorStop(0, '#f5f5f5');
+  grad.addColorStop(0.5, '#ededed');
+  grad.addColorStop(1, '#d8d8d8');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  const groundY = H * GROUND_Y_FRAC;
+  const floorGrad = ctx.createLinearGradient(0, groundY - 40, 0, groundY);
+  floorGrad.addColorStop(0, 'rgba(0,0,0,0)');
+  floorGrad.addColorStop(1, 'rgba(0,0,0,0.04)');
+  ctx.fillStyle = floorGrad;
+  ctx.fillRect(0, groundY - 40, W, 40);
+
+  ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, groundY);
+  ctx.lineTo(W, groundY);
+  ctx.stroke();
+}
+
+// ─── MAIN LOOP ───
+let lastTime = 0;
+let scrollY = 0;
+let freezeTimer = 0;
+
+scrollContainer.addEventListener('scroll', () => {
+  scrollY = scrollContainer.scrollTop;
+});
+
+function render(timestamp) {
+  const dt = Math.min(timestamp - lastTime, 32);
+  lastTime = timestamp;
+
+  linkHitAreas = [];
+
+  Engine.update(engine, dt);
+
+  freezeTimer += dt;
+  if (freezeTimer > 160) {
+    freezeSlowBodies();
+    freezeTimer = 0;
+  }
+
+  drawBackground();
+  drawTitle();
+
+  // Clip: don't draw text above the title area
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, TITLE_BOTTOM, W, H - TITLE_BOTTOM);
+  ctx.clip();
+
+  const scrollOffset = scrollY / SCROLL_RATIO;
+
+  // The travel zone: blocks start just below TITLE_BOTTOM and move down
+  // screenY for block i = TITLE_BOTTOM + blockPositions[i].restY + scrollOffset
+  // Opacity: based on how far from TITLE_BOTTOM to BREAK_Y the block has traveled
+  // 0 at TITLE_BOTTOM, 1 well before BREAK_Y
+
+  const travelRange = BREAK_Y - TITLE_BOTTOM;
+  let queued = false;   // a block is waiting at the break line for the space below it to clear
+
+  for (let i = 0; i < NUM; i++) {
+    if (triggeredSections.has(i)) continue;
+
+    const bp = blockPositions[i];
+    const screenY = TITLE_BOTTOM + bp.restY + scrollOffset;
+
+    // Block center has passed break line → break it into letters, unless the last
+    // block's letters are still falling through that spot (fast scrolling).
+    if (screenY >= BREAK_Y) {
+      if (queued) continue;
+      if (spawnBandClear(bp.height)) {
+        triggerSection(i, BREAK_Y);
+      } else {
+        drawBlock(sections[i], BREAK_Y, 1, 0);
+        queued = true;
+      }
+      continue;
+    }
+
+    // Block is below viewport bottom → skip
+    if (screenY - bp.height / 2 > H) continue;
+
+    // Block hasn't entered yet (still above title bottom)
+    if (screenY + bp.height / 2 < TITLE_BOTTOM) continue;
+
+    // "scroll to continue" always renders fully visible
+    if (i === 0) {
+      drawBlock(sections[i], screenY, 1, 0);
+      continue;
+    }
+
+    // How far through the travel zone (0 = at title, 1 = at break)
+    const t = Math.max(0, (screenY - TITLE_BOTTOM) / travelRange);
+
+    // Opacity: ramps up over travel. Starts at 0.05 so there's always a hint,
+    // reaches full opacity at about 70% of travel
+    const alpha = Math.min(1, 0.05 + t * 1.35);
+
+    // Blur: heavy at top, clears as it descends
+    const blur = Math.max(0.1, (1 - t * 1.8) * 14);
+
+    drawBlock(sections[i], screenY, alpha, blur);
+  }
+
+  ctx.restore(); // remove clip
+
+  // Physics letters (drawn outside clip so they can fall everywhere)
+  for (const lb of letterBodies) {
+    const pos = lb.body.position;
+    const angle = lb.body.angle;
+    drawChar(lb.char, pos.x, pos.y, lb.fontSize, lb.bold, angle, 1, lb.color);
+  }
+
+  requestAnimationFrame(render);
+}
+
+// ─── RESET ───
+function resetAll() {
+  scrollContainer.scrollTop = 0;
+  scrollY = 0;
+  for (const lb of letterBodies) Composite.remove(world, lb.body);
+  letterBodies = [];
+  triggeredSections.clear();
+}
+
+resetBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  resetAll();
+});
+
+// ─── LINK INTERACTION ───
+scrollContainer.addEventListener('click', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  for (const area of linkHitAreas) {
+    if (x >= area.x1 && x <= area.x2 && y >= area.y1 && y <= area.y2) {
+      openLink(area.url);
+      break;
+    }
+  }
+});
+
+scrollContainer.addEventListener('mousemove', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  const overLink = linkHitAreas.some(area =>
+    x >= area.x1 && x <= area.x2 && y >= area.y1 && y <= area.y2
+  );
+  scrollContainer.style.cursor = overLink ? 'pointer' : '';
+});
+
+// ─── RESPONSIVE SIZES ───
+function getResponsiveSize(baseSize) {
+  // Short windows get smaller type, so the pile of fallen letters never reaches the break line.
+  const scaled = baseSize * TEXT_SCALE * Math.min(1, Math.max(0.6, H / 900));
+  if (W < 480) return scaled * 0.42;
+  if (W < 768) return scaled * 0.6;
+  return scaled;
+}
+
+function updateSectionSizes() {
+  for (let i = 0; i < NUM; i++) {
+    for (const line of sections[i].lines) {
+      line._baseSize = line._baseSize || line.size;
+      line.size = getResponsiveSize(line._baseSize);
+    }
+  }
+}
+
+updateSectionSizes();
+computeBlockPositions();
+updateScrollHeight();
+requestAnimationFrame(render);
+</script>
+</body>
+</html>
