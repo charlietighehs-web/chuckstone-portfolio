@@ -563,7 +563,7 @@
         <figure class="piece" style="--w:48">
           <button type="button" data-lb="image" data-group="paintings" data-src="assets/art/shadow-of-divine-perfection-full.webp"
                   data-caption="<b>Shadow of Divine Perfection</b> · about 36 × 48 in.">
-            <img class="hung" src="assets/art/shadow-of-divine-perfection.webp" width="1400" height="1051" loading="lazy" alt="A winged figure in black outline holding a gold-leafed column, on a field of blue and black dots with a yellow smear">
+            <img class="hung" src="assets/art/shadow-of-divine-perfection.webp" width="1400" height="1053" loading="lazy" alt="A winged figure in black outline holding a gold-leafed column, on a field of blue and black dots with a yellow smear">
           </button>
           <figcaption class="label"><b>Shadow of Divine Perfection</b>About 36 × 48 in.</figcaption>
         </figure>
@@ -926,7 +926,7 @@
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const ink = getComputedStyle(document.documentElement).getPropertyValue('--ink').trim() || '#161616';
   const swatch = new Image(); swatch.src = 'assets/ui/swatch-blue.webp';
-  let engine, W = 0, H = 0, dpr = 1, font = '', items = [], drag = null, tween = null, visible = false, looping = false, dirty = true, lastW = 0;
+  let engine, W = 0, H = 0, dpr = 1, font = '', items = [], drag = null, tween = null, visible = false, looping = false, dirty = true, lastW = 0, pending = [];
 
   function build() {
     const sr = stage.getBoundingClientRect();
@@ -981,10 +981,17 @@
     return { ...o, body: b, home: { x: o.x, y: o.y }, free: false };
   }
 
+  // Matter.js saves a body's mass when it is frozen. Freezing a body that is already frozen
+  // overwrites that with infinite mass, and the letter flies off to NaN when it is next released,
+  // so only ever switch a body that is in the other state.
+  function freeze(body, on) {
+    if (body.isStatic !== on) Body.setStatic(body, on);
+  }
+
   function release(it, kick) {
-    if (it.free) return;
+    if (it.free || tween) return;
     it.free = true;
-    Body.setStatic(it.body, false);
+    freeze(it.body, false);
     Sleeping.set(it.body, false);
     if (kick) {
       const side = it.body.position.x < W / 2 ? 1 : -1;      // lean toward the middle, so it piles up
@@ -1005,15 +1012,17 @@
     if (tween) return;
     // bottom line first, so the lines above tumble onto loose letters instead of landing on a shelf
     const order = items.filter(i => !i.free).sort((a, b) => b.home.y - a.home.y || Math.random() - 0.5);
-    order.forEach((it, k) => setTimeout(() => release(it, true), reduce ? 0 : k * 45));
+    order.forEach((it, k) => pending.push(setTimeout(() => release(it, true), reduce ? 0 : k * 45)));
   }
 
   function rebuild() {
     if (drag) endDrag();
+    pending.forEach(clearTimeout); pending = [];        // a knock still in progress stops here
     const t0 = performance.now(), dur = reduce ? 0 : 900;
     items.forEach(it => {
       it.from = { x: it.body.position.x, y: it.body.position.y, a: ((it.body.angle + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI };
-      Body.setStatic(it.body, true);
+      freeze(it.body, true);
+      Body.setVelocity(it.body, { x: 0, y: 0 }); Body.setAngularVelocity(it.body, 0);
     });
     tween = { t0, dur };
     wake();
@@ -1087,7 +1096,7 @@
   addEventListener('resize', () => {
     if (Math.abs(stage.getBoundingClientRect().width - lastW) < 2) return;
     lastW = stage.getBoundingClientRect().width;
-    endDrag(); tween = null; build(); wake();
+    endDrag(); tween = null; pending.forEach(clearTimeout); pending = []; build(); wake();
   });
   (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => {
     lastW = stage.getBoundingClientRect().width;
